@@ -1,0 +1,76 @@
+export type ButtonVariant = 'primary' | 'secondary' | 'icon' | 'text'
+export type ButtonSize = 'sm' | 'md' | 'lg'
+
+export interface NavLink {
+ label: string
+ href: string
+ isActive?: boolean
+}
+
+export interface ColorSwatch {
+ name: string
+ hex: string
+ bgClass: string
+}
+
+export interface TypographyVariant {
+ label: string
+ sampleText: string
+ className: string
+ meta?: string
+}
+
+export interface DestinationCardData {
+ imageUrl: string
+ imageAlt: string
+ region: string
+ title: string
+ description: string
+ href?: string
+}
+
+export interface PackageFeature {
+ icon: string
+ text: string
+}
+
+export interface PackageCardData {
+ title: string
+ duration: string
+ price: string
+ priceLabel?: string
+ features: PackageFeature[]
+ ctaLabel?: string
+ onCtaClick?: () => void
+}
+
+export interface TestimonialData {
+ quote: string
+ authorName: string
+ authorTitle?: string
+ authorAvatarUrl: string
+ authorAvatarAlt?: string
+}
+
+export interface FooterAction {
+ icon: string
+ label: string
+ onClick?: () => void
+}
+
+export interface FieldBaseProps {
+ id: string
+ label: string
+ helperText?: string
+ errorMessage?: string
+ required?: boolean
+ disabled?: boolean
+ className?: string
+}
+
+export interface SelectOption {
+ value: string
+ label: string
+ disabled?: boolean
+}
+

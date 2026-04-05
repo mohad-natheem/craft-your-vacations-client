@@ -1,26 +1,265 @@
+/* app/globals.css */
+/* Design System: "The Nocturnal Voyager"
+   All color tokens live here as CSS variables.
+   Tailwind v4 reads these via @theme and maps them to utility classes.
+   Rule: Never hardcode a hex value in a component — always use a token. */
+
+@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap");
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+/* --------------------------------------------------------------------------
+   1. CSS VARIABLES — Single source of truth for every color in the app
+   -------------------------------------------------------------------------- */
+:root,
+[data-theme="light"] {
+  /* --- Backgrounds / Surfaces --- */
+  --color-base: #ffffff; /* surface_container_lowest — sunken cards */
+  --color-bg: #f7f9fb; /* page background */
+  --color-surface-low: #f2f4f6; /* section areas */
+  --color-surface: #eceef0; /* cards, navbar */
+  --color-surface-high: #e4e7e9; /* modals, menus */
+  --color-surface-highest: #e0e3e5; /* inputs */
+
+  /* --- Brand / Accent --- */
+  --color-primary: #006782; /* deep teal — CTAs, active states */
+  --color-primary-dark: #004d63; /* hover state */
+  --color-primary-muted: #75d2f7; /* cyan as bg wash / tint */
+  --color-on-primary: #ffffff; /* text on teal buttons */
+  --color-gradient-end: #3a9fc2;
+
+  /* --- Text / On-surface --- */
+  --color-text: #191c1e;
+  --color-text-muted: #3e484d;
+  --color-text-subtle: #8a9499;
+
+  /* --- Ghost Border (accessibility only) --- */
+  --color-outline: rgba(190, 200, 206, 0.2);
+
+  /* --- Glassmorphism --- */
+  --glass-bg: rgba(236, 238, 240, 0.7);
+  --glass-blur: 20px;
+
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
+
+  /* --- Spacing rhythm --- */
+  --section-gap: 80px;
 }
 
+[data-theme="dark"] {
+  /* --- Backgrounds / Surfaces (darkest → lightest) --- */
+  --color-base: #060e20; /* surface_container_lowest — sunken cards */
+  --color-bg: #0b1326; /* surface / foundation — page background  */
+  --color-surface-low: #131b2e; /* surface_container_low  — section areas  */
+  --color-surface: #171f33; /* surface_container      — cards, navbar  */
+  --color-surface-high: #222a3d; /* surface_container_high — modals, menus */
+  --color-surface-highest: #2a3349; /* surface_container_highest — inputs      */
+
+  /* --- Brand / Accent --- */
+  --color-primary: #75d2f7; /* Signature cyan — CTAs, active states   */
+  --color-primary-dark: #3a9fc2; /* Gradient end / hover state             */
+  --color-primary-muted: #1a4a5e; /* Low-emphasis primary tint              */
+  --color-gradient-end: #3a9fc2; /* Low-emphasis primary tint              */
+
+  /* --- Text / On-surface --- */
+  --color-text: #dae2fd; /* on_surface — primary readable text     */
+  --color-text-muted: #8a99c2; /* on_surface_variant — secondary text    */
+  --color-text-subtle: #4a5880; /* Tertiary / disabled text               */
+  --color-on-primary: #0b1326; /* Text on cyan buttons                   */
+
+  /* --- Ghost Border fallback (accessibility only) --- */
+  --color-outline: rgba(62, 77, 120, 0.15); /* outline_variant @15%   */
+
+  /* --- Glassmorphism --- */
+  --glass-bg: rgba(23, 31, 51, 0.72); /* surface + 72% opacity  */
+  --glass-blur: 16px;
+
+  /* --- Typography Scale --- */
+  --font-display: "Plus Jakarta Sans", sans-serif;
+  --font-body: "Plus Jakarta Sans", sans-serif;
+
+  /* --- Spacing rhythm --- */
+  --section-gap: 80px;
+}
+
+/* --------------------------------------------------------------------------
+   2. TAILWIND v4 THEME — Maps CSS variables → Tailwind utility classes
+   Usage in components:
+     bg-bg           → background: #0b1326
+     bg-surface       → background: #171f33
+     text-primary     → color: #75d2f7
+     text-muted       → color: #8a99c2
+   -------------------------------------------------------------------------- */
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  /* Backgrounds */
+  --color-base: var(--color-base);
+  --color-bg: var(--color-bg);
+  --color-surface-low: var(--color-surface-low);
+  --color-surface: var(--color-surface);
+  --color-surface-high: var(--color-surface-high);
+  --color-surface-highest: var(--color-surface-highest);
+
+  /* Brand */
+  --color-primary: var(--color-primary);
+  --color-primary-dark: var(--color-primary-dark);
+  --color-primary-muted: var(--color-primary-muted);
+  --color-on-primary: var(--color-on-primary);
+  --color-gradient-end: var(--color-gradient-end);
+
+  /* Text */
+  --color-text: var(--color-text);
+  --color-text-muted: var(--color-text-muted);
+  --color-text-subtle: var(--color-text-subtle);
+  --color-outline: var(--color-outline);
+
+  /* Font families */
+  --font-sans: var(--font-body);
+  --font-display: var(--font-display);
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* --------------------------------------------------------------------------
+   3. BASE STYLES
+   -------------------------------------------------------------------------- */
+@layer base {
+  *,
+  *::before,
+  *::after {
+    box-sizing: border-box;
+  }
+
+  html {
+    font-family: var(--font-body);
+    background-color: var(--color-bg);
+    color: var(--color-text);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    scroll-behavior: smooth;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* --------------------------------------------------------------------------
+   4. TYPOGRAPHY SCALE — utility classes for the design system scale
+   -------------------------------------------------------------------------- */
+@layer utilities {
+  .text-display-lg {
+    font-size: 3.5rem; /* 56px */
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+  }
+
+  .text-display-md {
+    font-size: 2.75rem; /* 44px */
+    font-weight: 800;
+    line-height: 1.15;
+    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+  }
+
+  .text-display-sm {
+    font-size: 2rem; /* 32px */
+    font-weight: 700;
+    line-height: 1.2;
+    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+  }
+
+  .text-headline-lg {
+    font-size: 1.75rem; /* 28px */
+    font-weight: 700;
+    line-height: 1.25;
+    letter-spacing: -0.02em;
+  }
+
+  .text-headline-md {
+    font-size: 1.375rem; /* 22px */
+    font-weight: 600;
+    line-height: 1.3;
+    letter-spacing: -0.01em;
+  }
+
+  .text-headline-sm {
+    font-size: 1.125rem; /* 18px */
+    font-weight: 600;
+    line-height: 1.35;
+  }
+
+  .text-body-lg {
+    font-size: 1rem; /* 16px */
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .text-body-md {
+    font-size: 0.9375rem; /* 15px */
+    font-weight: 400;
+    line-height: 1.6;
+  }
+
+  .text-body-sm {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 400;
+    line-height: 1.55;
+  }
+
+  .text-body-sm-bold {
+    font-size: 0.875rem; /* 14px */
+    font-weight: 700;
+    line-height: 1.55;
+  }
+
+  .text-label-md {
+    font-size: 0.75rem; /* 12px */
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+
+  .text-label-sm {
+    font-size: 0.6875rem; /* 11px */
+    font-weight: 600;
+    line-height: 1.4;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   5. COMPONENT UTILITIES — reusable patterns from the design spec
+   -------------------------------------------------------------------------- */
+@layer utilities {
+  /* Glassmorphism — for navbar, floating cards */
+  .glass {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+  }
+
+  /* Primary button gradient */
+  .btn-gradient {
+    background: linear-gradient(
+      135deg,
+      var(--color-primary),
+      var(--color-gradient-end)
+    );
+    color: var(--color-on-primary);
+    /* border-radius: 1rem; */
+  }
+
+  /* Ghost border — accessibility fallback only */
+  .ghost-border {
+    border: 1px solid var(--color-outline);
+  }
+
+  /* Ambient floating shadow — for modals, elevated panels */
+  .shadow-ambient {
+    box-shadow: 0 8px 48px 0 rgba(11, 19, 38, 0.08);
+  }
+
+  /* Section spacing rhythm */
+  .section-gap {
+    padding-block: var(--section-gap);
+  }
 }

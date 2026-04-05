@@ -1,0 +1,82 @@
+import { useState, useEffect } from "react";
+import type { FieldBaseProps } from "@/app/types";
+
+interface TextAreaFieldProps extends FieldBaseProps {
+  placeholder?: string;
+  value?: string;
+  defaultValue?: string;
+  onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  rows?: number;
+  maxLength?: number;
+}
+
+export function TextAreaField({
+  id,
+  label,
+  helperText,
+  errorMessage,
+  required,
+  disabled,
+  className = "",
+  placeholder,
+  value,
+  defaultValue,
+  onChange,
+  rows = 4,
+  maxLength,
+}: TextAreaFieldProps) {
+  const [charCount, setCharCount] = useState(() => {
+    return (value ?? defaultValue ?? "").length;
+  });
+
+  useEffect(() => {
+    if (value !== undefined) {
+      setCharCount(value.length);
+    }
+  }, [value]);
+
+  const hasError = Boolean(errorMessage);
+
+  function handleChange(e: React.ChangeEvent<HTMLTextAreaElement>) {
+    setCharCount(e.target.value.length);
+    onChange?.(e);
+  }
+
+  return (
+    <div className={`flex flex-col gap-1.5 ${className}`}>
+      <div className="flex items-baseline justify-between">
+        <label htmlFor={id} className="text-label-md text-text-muted">
+          {label}
+          {required && <span className="text-primary ml-1">*</span>}
+        </label>
+        {maxLength && (
+          <span className="text-label-sm text-text-subtle">
+            {charCount}/{maxLength}
+          </span>
+        )}
+      </div>
+      <textarea
+        id={id}
+        placeholder={placeholder}
+        value={value}
+        defaultValue={defaultValue}
+        onChange={handleChange}
+        disabled={disabled}
+        required={required}
+        rows={rows}
+        maxLength={maxLength}
+        className={`w-full px-4 py-3 rounded-xl text-body-md text-text placeholder:text-text-subtle bg-surface-highest border border-outline outline-none resize-y transition-all
+         focus:ring-2 focus:ring-primary/50 focus:border-primary/40
+         disabled:opacity-50 disabled:cursor-not-allowed
+         ${hasError ? "ring-2 ring-red-500/50 border-red-500/50" : ""}
+       `}
+      />
+      {hasError && <p className="text-body-sm text-red-400">{errorMessage}</p>}
+      {!hasError && helperText && (
+        <p className="text-body-sm text-text-subtle">{helperText}</p>
+      )}
+    </div>
+  );
+}
+
+export default TextAreaField;
