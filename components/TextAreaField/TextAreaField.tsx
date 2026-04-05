@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import type { FieldBaseProps } from "@/app/types";
+import type { FieldBaseProps } from "@/app/types/component";
 
 interface TextAreaFieldProps extends FieldBaseProps {
   placeholder?: string;

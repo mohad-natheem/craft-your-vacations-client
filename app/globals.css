@@ -32,6 +32,9 @@
   --color-text-muted: #3e484d;
   --color-text-subtle: #8a9499;
 
+  /* App main theme color will be the same for both themes */
+  --color-primary-app: #75d2f7;
+
   /* --- Ghost Border (accessibility only) --- */
   --color-outline: rgba(190, 200, 206, 0.2);
 
@@ -66,6 +69,9 @@
   --color-text-muted: #8a99c2; /* on_surface_variant — secondary text    */
   --color-text-subtle: #4a5880; /* Tertiary / disabled text               */
   --color-on-primary: #0b1326; /* Text on cyan buttons                   */
+
+  /* App main theme color will be the same for both themes */
+  --color-primary-app: #75d2f7;
 
   /* --- Ghost Border fallback (accessibility only) --- */
   --color-outline: rgba(62, 77, 120, 0.15); /* outline_variant @15%   */
@@ -105,6 +111,7 @@
   --color-primary-muted: var(--color-primary-muted);
   --color-on-primary: var(--color-on-primary);
   --color-gradient-end: var(--color-gradient-end);
+  --color-primary-app: var(--color-primary-app);
 
   /* Text */
   --color-text: var(--color-text);
@@ -141,6 +148,22 @@
    4. TYPOGRAPHY SCALE — utility classes for the design system scale
    -------------------------------------------------------------------------- */
 @layer utilities {
+  .text-display-xxl {
+    font-size: 6rem; /* 56px */
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+  }
+
+  .text-display-xl {
+    font-size: 3.75rem; /* 56px */
+    font-weight: 800;
+    line-height: 1.1;
+    letter-spacing: -0.02em;
+    font-family: var(--font-display);
+  }
+
   .text-display-lg {
     font-size: 3.5rem; /* 56px */
     font-weight: 800;
@@ -261,5 +284,15 @@
   /* Section spacing rhythm */
   .section-gap {
     padding-block: var(--section-gap);
+  }
+
+  /* Hide scrollbar but allow scrolling */
+  .no-scrollbar::-webkit-scrollbar {
+    display: none; /* Chrome, Safari */
+  }
+
+  .no-scrollbar {
+    -ms-overflow-style: none; /* IE, Edge */
+    scrollbar-width: none; /* Firefox */
   }
 }

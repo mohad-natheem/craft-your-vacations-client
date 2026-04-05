@@ -1,0 +1,20 @@
+export function Section({
+  id,
+  title,
+  children,
+}: {
+  id: string;
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <section id={id} className="section-gap border-t border-outline">
+      <div className="mx-auto max-w-7xl px-6">
+        <p className="text-label-md text-text-subtle mb-8">{title}</p>
+        {children}
+      </div>
+    </section>
+  );
+}
+
+export default Section;

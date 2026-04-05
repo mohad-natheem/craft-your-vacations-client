@@ -14,38 +14,118 @@ import { PackageCard } from "@/components/PackageCard/PackageCard";
 import { TestimonialCard } from "@/components/TestimonialCard/TestimonialCard";
 import { Footer } from "@/components/Footer/Footer";
 import { FAB } from "@/components/FAB/FAB";
-import { ArrowUp, MapPin } from "lucide-react";
+import { ArrowUp, ExternalLink, Heart, MapPin, Rocket } from "lucide-react";
 import { Search } from "lucide-react";
+import Section from "@/components/Section/Sections";
 
 /* ─── demo data ──────────────────────────────────────────────────────────── */
 
 const destinations = [
   {
-    imageUrl: "https://picsum.photos/seed/santorini/600/800",
-    imageAlt: "Santorini at sunset",
-    region: "Europe",
-    title: "Santorini, Greece",
-    description:
-      "Whitewashed villages perched above the caldera, fiery sunsets and sapphire waters await.",
-    href: "#",
+    id: 1,
+    slug: "dubai",
+    title: "Dubai",
+    imagePath: "/dubai.jpg",
+    content:
+      "Glamour, modern skylines, desert safaris and luxury — Dubai awaits the discerning traveler.",
+    minPackagePrice: 60000,
+    detailJson: {
+      packages: [
+        {
+          key: "classic",
+          days: 4,
+          price: 60000,
+          title: "Classic Dubai",
+          excerpt: "Highlights: Burj Khalifa, Desert Safari, Dhow Cruise",
+        },
+        {
+          key: "luxury",
+          days: 6,
+          price: 120000,
+          title: "Luxury Dubai",
+          excerpt: "Luxury hotels, private desert experience, fine dining",
+        },
+        {
+          key: "family",
+          days: 5,
+          price: 85000,
+          title: "Family Escape",
+          excerpt: "Family-friendly resorts & theme-park day",
+        },
+      ],
+      destinationCities: ["Abu Dhabi", "Sharjah", "Al Ain"],
+    },
   },
   {
-    imageUrl: "https://picsum.photos/seed/kyoto/600/800",
-    imageAlt: "Kyoto temple gardens",
-    region: "Asia",
-    title: "Kyoto, Japan",
-    description:
-      "Ancient temples, zen gardens and cherry-blossom avenues in Japan's cultural heartland.",
-    href: "#",
+    id: 2,
+    slug: "bali",
+    title: "Bali",
+    imagePath: "/bali.jpg",
+    content:
+      "Tropical paradise of temples, beaches, and lush rice terraces — Bali offers serenity and adventure in equal measure.",
+    minPackagePrice: 55000,
+    detailJson: {
+      packages: [
+        {
+          key: "essence",
+          days: 5,
+          price: 55000,
+          title: "Essence of Bali",
+          excerpt: "Ubud temples, rice terraces, and Kuta beach",
+        },
+        {
+          key: "romantic",
+          days: 6,
+          price: 95000,
+          title: "Romantic Bali",
+          excerpt: "Couples spa, sunset dinner, and beach villas",
+        },
+        {
+          key: "explorer",
+          days: 7,
+          price: 110000,
+          title: "Bali Explorer",
+          excerpt:
+            "Mount Batur trek, waterfalls, and snorkeling in Nusa Penida",
+        },
+      ],
+      destinationCities: ["Ubud", "Seminyak", "Nusa Dua"],
+    },
   },
   {
-    imageUrl: "https://picsum.photos/seed/patagonia/600/800",
-    imageAlt: "Patagonia mountains",
-    region: "South America",
-    title: "Patagonia, Chile",
-    description:
-      "Dramatic granite towers, glaciers and untamed wilderness at the end of the world.",
-    href: "#",
+    id: 3,
+    slug: "paris",
+    title: "Paris",
+    imagePath: "/paris.jpg",
+    content:
+      "The city of lights, love, and timeless art — Paris charms with history, cuisine, and chic boulevards.",
+    minPackagePrice: 90000,
+    detailJson: {
+      packages: [
+        {
+          key: "romantic",
+          days: 5,
+          price: 90000,
+          title: "Romantic Paris",
+          excerpt: "Eiffel Tower, Seine Cruise, Montmartre",
+        },
+        {
+          key: "artlover",
+          days: 6,
+          price: 115000,
+          title: "Art & Culture",
+          excerpt: "Louvre, Orsay, and Versailles Palace",
+        },
+        {
+          key: "family",
+          days: 7,
+          price: 125000,
+          title: "Family Getaway",
+          excerpt: "Disneyland Paris and city highlights",
+        },
+      ],
+      destinationCities: ["Versailles", "Lyon", "Nice"],
+    },
   },
 ];
 
@@ -116,26 +196,6 @@ const testimonials = [
     authorAvatarAlt: "Aiko Nakamura",
   },
 ];
-
-/* ─── section wrapper ────────────────────────────────────────────────────── */
-function Section({
-  id,
-  title,
-  children,
-}: {
-  id: string;
-  title: string;
-  children: React.ReactNode;
-}) {
-  return (
-    <section id={id} className="section-gap border-t border-outline">
-      <div className="mx-auto max-w-7xl px-6">
-        <p className="text-label-md text-text-subtle mb-8">{title}</p>
-        {children}
-      </div>
-    </section>
-  );
-}
 
 /* ─── page ───────────────────────────────────────────────────────────────── */
 export default function DemoPage() {
@@ -220,21 +280,15 @@ export default function DemoPage() {
             <p className="text-body-sm text-text-subtle mb-4">With icons</p>
             <div className="flex flex-wrap items-center gap-4">
               <Button variant="primary">
-                <span className="material-symbols-outlined text-[18px]">
-                  rocket_launch
-                </span>
+                <Rocket/>
                 Book Now
               </Button>
               <Button variant="secondary">
-                <span className="material-symbols-outlined text-[18px]">
-                  favorite
-                </span>
+                <Heart/>
                 Save Trip
               </Button>
               <Button variant="primary" href="#">
-                <span className="material-symbols-outlined text-[18px]">
-                  open_in_new
-                </span>
+                <ExternalLink/>
                 Link Button
               </Button>
             </div>
@@ -319,8 +373,15 @@ export default function DemoPage() {
       {/* Destination Cards */}
       <Section id="destinations" title="Destination Cards">
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-          {destinations.map((d) => (
-            <DestinationCard key={d.title} {...d} />
+          {destinations.map((destination) => (
+            <DestinationCard
+              href="/"
+              key={destination.id}
+              imagePath={destination.imagePath}
+              title={destination.title}
+              destinationCities={destination.detailJson.destinationCities}
+              content={destination.content}
+            />
           ))}
         </div>
       </Section>

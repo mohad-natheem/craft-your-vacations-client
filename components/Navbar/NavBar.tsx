@@ -1,13 +1,15 @@
 import React, { useEffect, useState } from "react";
-import type { NavLink } from "@/app/types";
+import type { NavLink } from "@/app/types/component";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Bell, Link } from "lucide-react";
+import { Bell } from "lucide-react";
 import { Search } from "lucide-react";
 import { CircleUser } from "lucide-react";
 import Logo from "@/public/logo.png";
 import LogoText from "@/public/logo_text.png";
 import ToggleTheme from "@/components/ToggleTheme/ToggleTheme";
+import Link from "next/link";
+import path from "path";
 
 interface NavbarProps {
   logo?: React.ReactNode;
@@ -17,9 +19,9 @@ interface NavbarProps {
 
 const defaultLinks: NavLink[] = [
   { label: "Home", href: "/" },
-  { label: "Destinations", href: "destinations", isActive: true },
-  { label: "Packages", href: "packages" },
-  { label: "Components", href: "components" },
+  { label: "Destinations", href: "/destinations" },
+  { label: "Packages", href: "/packages" },
+  { label: "Components", href: "/components" },
 ];
 
 export function Navbar({
@@ -37,9 +39,9 @@ export function Navbar({
     <nav
       className={`fixed top-0 inset-x-0 z-50 glass border-b border-outline ${className}`}
     >
-      <div className="mx-auto max-w-7xl px-6 h-16 flex items-center justify-between">
+      <div className="mx-auto px-10 h-16 flex items-center justify-between">
         {/* Logo */}
-        <div className="flex gap-0 items-center justify-center gap-2">
+        <div className="flex items-center justify-center gap-2">
           <Image src={Logo} alt="Logo" className="w-10" />
           <Image src={LogoText} alt="Logo" className="w-25" />
         </div>
@@ -47,25 +49,25 @@ export function Navbar({
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-1">
           {links.map((link) => {
-            const isActive = `/${link.href}` === pathname;
+            const isActive = link.href === pathname;
             return (
               <li key={link.href}>
-                <a
-                  href={link.href}
-                  className={`px-4 py-2 text-body-md rounded-lg transition-colors relative pb-0.5 ${
-                    isActive
-                      ? "text-primary"
-                      : "text-text-muted hover:text-text"
-                  }`}
-                >
-                  <span className="relative inline-block">
-                    {link.label}
-
-                    {isActive && (
-                      <span className="absolute left-1/2 -translate-x-1/2 bottom-0 h-px w-full bg-primary rounded-full" />
-                    )}
-                  </span>
-                </a>
+                <Link href={link.href}>
+                  <div
+                    className={`px-4 py-2 text-body-md transition-colors relative pb-0.5 ${
+                      isActive
+                        ? "text-primary"
+                        : "text-text-muted hover:text-text"
+                    }`}
+                  >
+                    <span className="relative inline-block">
+                      {link.label}
+                      {isActive && (
+                        <span className="absolute left-1/2 -translate-x-1/2 bottom-0 h-px w-full bg-primary rounded-full" />
+                      )}
+                    </span>
+                  </div>
+                </Link>
               </li>
             );
           })}
@@ -80,13 +82,7 @@ export function Navbar({
           >
             <Search className="w-5 h-5" />
           </button>
-          <button
-            type="button"
-            aria-label="Notifications"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
-          >
-            <Bell className="w-5 h-5" />
-          </button>
+
           <button
             type="button"
             aria-label="Profile"
@@ -94,6 +90,7 @@ export function Navbar({
           >
             <CircleUser className="w-5 h-5" />
           </button>
+          <ToggleTheme />
         </div>
 
         {/* Mobile hamburger */}
@@ -107,8 +104,6 @@ export function Navbar({
             {mobileOpen ? "close" : "menu"}
           </span>
         </button>
-
-        <ToggleTheme />
       </div>
 
       {/* Mobile menu */}

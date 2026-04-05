@@ -1,5 +1,5 @@
 import React from "react";
-import type { ButtonVariant, ButtonSize } from "@/app/types";
+import type { ButtonVariant, ButtonSize } from "@/app/types/component";
 import Link from "next/link";
 
 interface ButtonProps {
