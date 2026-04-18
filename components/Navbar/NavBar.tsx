@@ -1,15 +1,17 @@
-import React, { useEffect, useState } from "react";
+"use client";
+
+import React, { useEffect } from "react";
 import type { NavLink } from "@/app/types/component";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Bell } from "lucide-react";
-import { Search } from "lucide-react";
-import { CircleUser } from "lucide-react";
+import { Search, CircleUser } from "lucide-react";
 import Logo from "@/public/logo.png";
 import LogoText from "@/public/logo_text.png";
 import ToggleTheme from "@/components/ToggleTheme/ToggleTheme";
 import Link from "next/link";
-import path from "path";
+import { useUser } from "@auth0/nextjs-auth0/client";
+import Button from "../Button/Button";
+import { useUIStore } from "@/stores/useUIStore";
 
 interface NavbarProps {
   logo?: React.ReactNode;
@@ -25,16 +27,17 @@ const defaultLinks: NavLink[] = [
 ];
 
 export function Navbar({
-  logo,
   links = defaultLinks,
   className = "",
 }: NavbarProps) {
-  const [mobileOpen, setMobileOpen] = useState(false);
   const pathname = usePathname();
+  const { user, isLoading } = useUser();
+  const { mobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useUIStore();
 
   useEffect(() => {
-    console.log(pathname);
+    closeMobileMenu();
   }, [pathname]);
+
   return (
     <nav
       className={`fixed top-0 inset-x-0 z-50 glass border-b border-outline ${className}`}
@@ -83,13 +86,31 @@ export function Navbar({
             <Search className="w-5 h-5" />
           </button>
 
-          <button
-            type="button"
-            aria-label="Profile"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
-          >
-            <CircleUser className="w-5 h-5" />
-          </button>
+          {isLoading ? (
+            <div className="w-10 h-10 rounded-full bg-surface-high animate-pulse" />
+          ) : user ? (
+            <Link
+              href="/auth/logout"
+              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-high hover:bg-surface transition-colors"
+            >
+              {user.picture ? (
+                <Image
+                  src={user.picture}
+                  alt={user.name ?? "User avatar"}
+                  width={28}
+                  height={28}
+                  className="rounded-full"
+                />
+              ) : (
+                <CircleUser className="w-5 h-5 text-text-muted" />
+              )}
+              <span className="text-body-sm text-text-muted hidden lg:block">
+                {user.name ?? user.email}
+              </span>
+            </Link>
+          ) : (
+            <Button href="/login">Login</Button>
+          )}
           <ToggleTheme />
         </div>
 
@@ -97,23 +118,22 @@ export function Navbar({
         <button
           type="button"
           className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
-          aria-label={mobileOpen ? "Close menu" : "Open menu"}
-          onClick={() => setMobileOpen((v) => !v)}
+          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+          onClick={toggleMobileMenu}
         >
           <span className="material-symbols-outlined text-[20px]">
-            {mobileOpen ? "close" : "menu"}
+            {mobileMenuOpen ? "close" : "menu"}
           </span>
         </button>
       </div>
 
       {/* Mobile menu */}
-      {mobileOpen && (
+      {mobileMenuOpen && (
         <div className="md:hidden bg-surface border-t border-outline px-6 py-4 flex flex-col gap-1">
           {links.map((link) => (
-            <a
+            <Link
               key={link.href}
               href={link.href}
-              onClick={() => setMobileOpen(false)}
               className={`px-4 py-3 rounded-lg text-body-md transition-colors ${
                 link.isActive
                   ? "text-primary bg-primary/10"
@@ -121,7 +141,7 @@ export function Navbar({
               }`}
             >
               {link.label}
-            </a>
+            </Link>
           ))}
         </div>
       )}

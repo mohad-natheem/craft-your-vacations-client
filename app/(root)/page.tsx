@@ -72,7 +72,7 @@ export default function HomePage() {
           </div>
 
           <div className="flex gap-20 overflow-x-auto pb-10 no-scrollbar">
-            {data &&
+            {/* {data &&
               data.slice(0, 5).map((destination, index) => {
                 const className = index % 2 !== 0 ? "pt-12" : "";
                 return (
@@ -90,7 +90,8 @@ export default function HomePage() {
                     />
                   </div>
                 );
-              })}
+              })
+              } */}
           </div>
         </div>
       </section>

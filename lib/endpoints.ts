@@ -2,5 +2,5 @@ import { api } from "@/lib/api";
 import type { Destination } from "@/app/types/api";
 
 export const destinationsApi = {
-  getAll: () => api.getRaw<Destination[]>("destinations"),
+  getAll: () => api.get<Destination[]>("destinations"),
 };

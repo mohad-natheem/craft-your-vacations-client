@@ -4,7 +4,7 @@ import { Destination } from "@/app/types/api";
 
 export async function GET(): Promise<NextResponse> {
   const result = await bffFetch<Destination[]>("/api/Destinations", {
-    isPublic: true, // remove this if destinations require auth
+    isPublic: true,
   });
 
   if (!result.ok) return result.response;

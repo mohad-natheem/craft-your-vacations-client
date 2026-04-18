@@ -1,151 +1,92 @@
-// import { auth } from '@/lib/auth';
+import { auth0 } from "@/lib/auth0";
 import { NextResponse } from "next/server";
 
 const BACKEND_URL = "http://localhost:5025";
 
-
 interface BffFetchOptions {
-  /** Additional headers to forward to .NET */
-  headers?: Record<string, string>;
-  /** Next.js fetch cache strategy. Defaults to revalidate: 300 */
-  cache?: RequestCache | { revalidate: number };
-  /** If true, skips auth check. Use only for public endpoints */
+  /** If true, skips the auth check. Use for public endpoints. */
   isPublic?: boolean;
-  /** Allowed query param keys to whitelist from the incoming request */
-  allowedParams?: string[];
-  /** Parsed URLSearchParams from the incoming request */
-  searchParams?: URLSearchParams;
+  /** Next.js cache strategy. Defaults to revalidate every 300s. */
+  cache?: RequestCache | { revalidate: number };
+  /** Extra headers to forward to .NET */
+  headers?: Record<string, string>;
 }
 
-interface BffFetchSuccess<T> {
-  ok: true;
-  data: T;
-}
-
-interface BffFetchFailure {
-  ok: false;
-  response: NextResponse;
-}
-
-type BffFetchResult<T> = BffFetchSuccess<T> | BffFetchFailure;
-
-// ---------------------------------------------------------------------------
-// Core fetcher
-// ---------------------------------------------------------------------------
+type BffResult<T> =
+  | { ok: true; data: T }
+  | { ok: false; response: NextResponse };
 
 export async function bffFetch<T>(
   path: string,
   options: BffFetchOptions = {},
-): Promise<BffFetchResult<T>> {
+): Promise<BffResult<T>> {
   const {
-    headers = {},
-    cache = { revalidate: 300 },
     isPublic = false,
-    allowedParams = [],
-    searchParams,
+    cache = { revalidate: 300 },
+    headers = {},
   } = options;
 
-  // -------------------------------------------------------------------------
-  // 1. Auth
-  // -------------------------------------------------------------------------
-  //   const session = isPublic ? null : await auth();
+  // 1. Auth check
+  const session = isPublic ? null : await auth0.getSession();
 
-  //   if (!isPublic && !session?.user) {
-  //     return {
-  //       ok: false,
-  //       response: NextResponse.json(
-  //         { message: 'Unauthorized', success: false },
-  //         { status: 401 },
-  //       ),
-  //     };
-  //   }
-
-  // -------------------------------------------------------------------------
-  // 2. Build query string from whitelisted params
-  // -------------------------------------------------------------------------
-  let queryString = "";
-
-  if (searchParams && allowedParams.length > 0) {
-    const forwarded = new URLSearchParams();
-    for (const key of allowedParams) {
-      const value = searchParams.get(key);
-      if (value !== null) forwarded.set(key, value);
-    }
-    queryString = forwarded.toString() ? `?${forwarded.toString()}` : "";
+  if (!isPublic && !session?.user) {
+    return {
+      ok: false,
+      response: NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
+    };
   }
 
-  console.log("[BFF] →", `${BACKEND_URL}${path}${queryString}`);
-
-  // -------------------------------------------------------------------------
-  // 3. Build fetch options
-  // -------------------------------------------------------------------------
+  // 2. Build headers
   const fetchHeaders: Record<string, string> = {
     "Content-Type": "application/json",
-    "X-Request-ID": crypto.randomUUID(),
     ...headers,
   };
 
-  //   if (session?.user?.accessToken) {
-  //     fetchHeaders['Authorization'] = `Bearer ${session.user.accessToken}`;
-  //   }
+  if (session?.user) {
+    const { token } = await auth0.getAccessToken();
+    if (token) fetchHeaders["Authorization"] = `Bearer ${token}`;
+  }
 
+  // 3. Build fetch options (supports both Next.js revalidate and standard cache)
   const fetchOptions: RequestInit =
     typeof cache === "object" && "revalidate" in cache
       ? { headers: fetchHeaders, next: cache }
       : { headers: fetchHeaders, cache };
 
-  // -------------------------------------------------------------------------
   // 4. Call .NET backend
-  // -------------------------------------------------------------------------
   let backendResponse: Response;
 
   try {
-    backendResponse = await fetch(
-      `${BACKEND_URL}${path}${queryString}`,
-      fetchOptions,
-    );
+    backendResponse = await fetch(`${BACKEND_URL}${path}`, fetchOptions);
   } catch {
     return {
       ok: false,
       response: NextResponse.json(
-        {
-          message: "Service unavailable. Please try again later.",
-          success: false,
-        },
+        { message: "Service unavailable. Please try again later." },
         { status: 503 },
       ),
     };
   }
-  console.log("[BFF] →", backendResponse);
 
-  // -------------------------------------------------------------------------
-  // 5. Handle error responses from .NET
-  // -------------------------------------------------------------------------
+  // 5. Handle .NET errors
   if (!backendResponse.ok) {
-    let errorMessage = `Request to ${path} failed`;
-
+    let message = `Request to ${path} failed`;
     try {
-      const errorBody = (await backendResponse.json()) as { message?: string };
-      if (errorBody.message) errorMessage = errorBody.message;
+      const body = (await backendResponse.json()) as { message?: string };
+      if (body.message) message = body.message;
     } catch {
-      // non-JSON error body — use fallback
+      // non-JSON error body — use fallback message
     }
-
     return {
       ok: false,
       response: NextResponse.json(
-        { message: errorMessage, success: false },
+        { message },
         { status: backendResponse.status },
       ),
     };
   }
 
-  // -------------------------------------------------------------------------
   // 6. Parse and return
-  // -------------------------------------------------------------------------
   const data = (await backendResponse.json()) as T;
-
-  console.log("[BFF] →", `Data :---- ${data}`);
-
   return { ok: true, data };
 }

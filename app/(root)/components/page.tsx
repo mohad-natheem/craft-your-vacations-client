@@ -1,7 +1,6 @@
 // Components Demo Page
 "use client";
 
-import { Navbar } from "@/components/Navbar/NavBar";
 import { PageHeader } from "@/components/PageHeader/PageHeader";
 import { ColorPalette } from "@/components/ColorPalette/ColorPalette";
 import { TypographyShowcase } from "@/components/TypographyShowcase/TypographyShowcase";
