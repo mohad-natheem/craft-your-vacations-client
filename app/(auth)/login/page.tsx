@@ -1,11 +1,13 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/public/logo.png";
 import LogoText from "@/public/logo_text.png";
 import Button from "@/components/Button/Button";
+import { signIn } from "next-auth/react";
 
-export default async function LoginPage() {
-
+export default function LoginPage() {
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
       <div className="glass border border-outline shadow-ambient rounded-3xl p-10 w-full max-w-sm flex flex-col items-center gap-8">
@@ -21,7 +23,10 @@ export default async function LoginPage() {
           </p>
         </div>
 
-        <Button variant="secondary" href="/auth/login">
+        <Button
+          variant="secondary"
+          onClick={() => signIn("google", { callbackUrl: "/" })}
+        >
           <svg
             viewBox="0 0 24 24"
             className="w-5 h-5 shrink-0"

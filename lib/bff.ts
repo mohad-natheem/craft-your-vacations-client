@@ -1,4 +1,7 @@
-import { NextResponse } from "next/server";
+import { getServerSession } from "next-auth/next";
+import { getToken } from "next-auth/jwt";
+import { NextRequest, NextResponse } from "next/server";
+import { authOptions } from "@/lib/auth";
 
 const BACKEND_URL = "http://localhost:5025";
 
@@ -17,6 +20,7 @@ type BffResult<T> =
 
 export async function bffFetch<T>(
   path: string,
+  req: NextRequest,
   options: BffFetchOptions = {},
 ): Promise<BffResult<T>> {
   const {
@@ -26,14 +30,14 @@ export async function bffFetch<T>(
   } = options;
 
   // 1. Auth check
-  // const session = isPublic ? null : await auth0.getSession();
+  const session = isPublic ? null : await getServerSession(authOptions);
 
-  // if (!isPublic && !session?.user) {
-  //   return {
-  //     ok: false,
-  //     response: NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
-  //   };
-  // }
+  if (!isPublic && !session?.user) {
+    return {
+      ok: false,
+      response: NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
+    };
+  }
 
   // 2. Build headers
   const fetchHeaders: Record<string, string> = {
@@ -41,10 +45,10 @@ export async function bffFetch<T>(
     ...headers,
   };
 
-  // if (session?.user) {
-  //   const { token } = await auth0.getAccessToken();
-  //   if (token) fetchHeaders["Authorization"] = `Bearer ${token}`;
-  // }
+  if (session?.user) {
+    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
+    if (token) fetchHeaders["Authorization"] = `Bearer ${token}`;
+  }
 
   // 3. Build fetch options (supports both Next.js revalidate and standard cache)
   const fetchOptions: RequestInit =

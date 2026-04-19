@@ -27,7 +27,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Stack
 - **Next.js 16.2.2** — App Router. Middleware file is `proxy.ts` (not `middleware.ts`), exported function is `proxy` (not `middleware`). Read `node_modules/next/dist/docs/` before writing any Next.js-specific code.
 - **React 19**, **TypeScript**, **Tailwind CSS v4**
-- **Auth0** (`@auth0/nextjs-auth0` v4) for authentication
+- **NextAuth** (`next-auth` v4) for authentication — Google OAuth provider
 - **TanStack React Query v5** for server state
 - **Zustand v5** for client UI state
 - **Axios** for browser-side HTTP (`lib/api.ts`)
@@ -57,7 +57,7 @@ Next.js API Route (app/api/...)
 - Used only inside Next.js route handlers (`app/api/**/route.ts`)
 - Always call `bffFetch<T>(path, options)` — never call the .NET backend directly from components
 - `isPublic: true` — skips auth check (use for publicly accessible endpoints)
-- `isPublic: false` (default) — requires a valid Auth0 session; returns 401 if missing; attaches `Authorization: Bearer <token>` header automatically
+- `isPublic: false` (default) — requires a valid NextAuth session; returns 401 if missing; attaches `Authorization: Bearer <token>` header automatically
 - `cache` — defaults to `{ revalidate: 300 }` (Next.js ISR, 5 min). Override per route:
   - `{ revalidate: N }` — cache for N seconds (Next.js server cache)
   - `"no-store"` — never cache, always hit .NET fresh (use for user-specific data)
@@ -105,7 +105,7 @@ When adding a new data-fetching feature, follow this order:
 | Data | Where it lives |
 |------|---------------|
 | Anything from the .NET backend | TanStack React Query |
-| Auth session / user profile | Auth0 (`useUser()`) |
+| Auth session / user profile | NextAuth (`useSession()`) |
 | Theme (dark/light) | `next-themes` (`useTheme()`) |
 | UI state shared across 2+ components | Zustand store (`stores/`) |
 | UI state local to one component | `useState` |

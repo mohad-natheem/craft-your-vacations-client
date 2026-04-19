@@ -63,6 +63,12 @@ export function Button({
         "text-primary underline decoration-primary/40 hover:decoration-primary rounded-lg px-1";
       sizeClass = "";
       break;
+
+    case "error":
+      variantClass =
+        "bg-red-700 text-on-primary shadow-ambient hover:opacity-90 rounded-2xl";
+      sizeClass = sizeClasses[size];
+      break;
   }
 
   const allClasses = `${baseClass} ${variantClass} ${sizeClass} ${className}`;

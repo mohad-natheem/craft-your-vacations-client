@@ -12,6 +12,7 @@ export function useDestinations() {
       console.log("queryFn result:", result); // check this in browser console
       return result;
     },
+    retry: 3,
     staleTime: 1000 * 60 * 5, // cache for 5 minutes before marking stale
   });
 }

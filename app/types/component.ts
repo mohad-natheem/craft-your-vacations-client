@@ -1,4 +1,4 @@
-export type ButtonVariant = "primary" | "secondary" | "icon" | "text";
+export type ButtonVariant = "primary" | "secondary" | "error" | "icon" | "text";
 export type ButtonSize = "sm" | "md" | "lg";
 
 export interface NavLink {
@@ -22,7 +22,7 @@ export interface TypographyVariant {
 
 export interface DestinationCardData {
   imagePath: string;
-  destinationCities: string[],
+  destinationCities: string[];
   title: string;
   content: string;
   href?: string;
@@ -74,4 +74,3 @@ export interface SelectOption {
 }
 
 // types/Api.ts
-
