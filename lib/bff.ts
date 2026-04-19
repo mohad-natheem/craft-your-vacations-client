@@ -1,4 +1,3 @@
-import { auth0 } from "@/lib/auth0";
 import { NextResponse } from "next/server";
 
 const BACKEND_URL = "http://localhost:5025";
@@ -27,14 +26,14 @@ export async function bffFetch<T>(
   } = options;
 
   // 1. Auth check
-  const session = isPublic ? null : await auth0.getSession();
+  // const session = isPublic ? null : await auth0.getSession();
 
-  if (!isPublic && !session?.user) {
-    return {
-      ok: false,
-      response: NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
-    };
-  }
+  // if (!isPublic && !session?.user) {
+  //   return {
+  //     ok: false,
+  //     response: NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
+  //   };
+  // }
 
   // 2. Build headers
   const fetchHeaders: Record<string, string> = {
@@ -42,10 +41,10 @@ export async function bffFetch<T>(
     ...headers,
   };
 
-  if (session?.user) {
-    const { token } = await auth0.getAccessToken();
-    if (token) fetchHeaders["Authorization"] = `Bearer ${token}`;
-  }
+  // if (session?.user) {
+  //   const { token } = await auth0.getAccessToken();
+  //   if (token) fetchHeaders["Authorization"] = `Bearer ${token}`;
+  // }
 
   // 3. Build fetch options (supports both Next.js revalidate and standard cache)
   const fetchOptions: RequestInit =

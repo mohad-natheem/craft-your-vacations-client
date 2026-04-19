@@ -9,7 +9,6 @@ import Logo from "@/public/logo.png";
 import LogoText from "@/public/logo_text.png";
 import ToggleTheme from "@/components/ToggleTheme/ToggleTheme";
 import Link from "next/link";
-import { useUser } from "@auth0/nextjs-auth0/client";
 import Button from "../Button/Button";
 import { useUIStore } from "@/stores/useUIStore";
 
@@ -26,12 +25,8 @@ const defaultLinks: NavLink[] = [
   { label: "Components", href: "/components" },
 ];
 
-export function Navbar({
-  links = defaultLinks,
-  className = "",
-}: NavbarProps) {
+export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
   const pathname = usePathname();
-  const { user, isLoading } = useUser();
   const { mobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useUIStore();
 
   useEffect(() => {
@@ -85,32 +80,6 @@ export function Navbar({
           >
             <Search className="w-5 h-5" />
           </button>
-
-          {isLoading ? (
-            <div className="w-10 h-10 rounded-full bg-surface-high animate-pulse" />
-          ) : user ? (
-            <Link
-              href="/auth/logout"
-              className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-surface-high hover:bg-surface transition-colors"
-            >
-              {user.picture ? (
-                <Image
-                  src={user.picture}
-                  alt={user.name ?? "User avatar"}
-                  width={28}
-                  height={28}
-                  className="rounded-full"
-                />
-              ) : (
-                <CircleUser className="w-5 h-5 text-text-muted" />
-              )}
-              <span className="text-body-sm text-text-muted hidden lg:block">
-                {user.name ?? user.email}
-              </span>
-            </Link>
-          ) : (
-            <Button href="/login">Login</Button>
-          )}
           <ToggleTheme />
         </div>
 

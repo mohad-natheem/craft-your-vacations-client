@@ -9,7 +9,6 @@
     "lint": "eslint"
   },
   "dependencies": {
-    "@auth0/nextjs-auth0": "^4.18.0",
     "@tanstack/react-query": "^5.96.2",
     "axios": "^1.14.0",
     "clsx": "^2.1.1",

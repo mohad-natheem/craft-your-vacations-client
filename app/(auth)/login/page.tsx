@@ -1,5 +1,3 @@
-import { auth0 } from "@/lib/auth0";
-import { redirect } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import Logo from "@/public/logo.png";
@@ -7,11 +5,6 @@ import LogoText from "@/public/logo_text.png";
 import Button from "@/components/Button/Button";
 
 export default async function LoginPage() {
-  const session = await auth0.getSession();
-
-  if (session) {
-    redirect("/");
-  }
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
