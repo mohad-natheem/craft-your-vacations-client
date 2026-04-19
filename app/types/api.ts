@@ -34,3 +34,16 @@ export interface Destination {
   minPackagePrice: number;
   detailJson: DestinationDetail;
 }
+
+export interface User {
+  id: string;
+  email: string;
+  name: string;
+  image?: string;
+  phoneVerified: boolean;
+}
+
+export interface OtpResponse {
+  success: boolean;
+  message: string;
+}

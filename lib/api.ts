@@ -11,7 +11,7 @@ client.interceptors.response.use(
   (error: unknown) => {
     if (axios.isAxiosError(error)) {
       if (error.response?.status === 401) {
-        window.location.href = "/login";
+        // window.location.href = "/login";
         return Promise.reject(new Error("Session expired"));
       }
       const message =

@@ -2,6 +2,7 @@ import { getServerSession } from "next-auth/next";
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
+import { url } from "inspector";
 
 const BACKEND_URL = "http://localhost:5025";
 
@@ -12,6 +13,10 @@ interface BffFetchOptions {
   cache?: RequestCache | { revalidate: number };
   /** Extra headers to forward to .NET */
   headers?: Record<string, string>;
+  /** HTTP method. Defaults to GET. */
+  method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+  /** Request body — will be JSON-serialised. */
+  body?: unknown;
 }
 
 type BffResult<T> =
@@ -27,6 +32,8 @@ export async function bffFetch<T>(
     isPublic = false,
     cache = { revalidate: 300 },
     headers = {},
+    method = "GET",
+    body,
   } = options;
 
   // 1. Auth check
@@ -51,10 +58,17 @@ export async function bffFetch<T>(
   }
 
   // 3. Build fetch options (supports both Next.js revalidate and standard cache)
-  const fetchOptions: RequestInit =
+  const cacheConfig =
     typeof cache === "object" && "revalidate" in cache
-      ? { headers: fetchHeaders, next: cache }
-      : { headers: fetchHeaders, cache };
+      ? { next: cache as { revalidate: number } }
+      : { cache: cache as RequestCache };
+
+  const fetchOptions: RequestInit = {
+    method,
+    headers: fetchHeaders,
+    ...cacheConfig,
+    ...(body !== undefined && { body: JSON.stringify(body) }),
+  };
 
   // 4. Call .NET backend
   let backendResponse: Response;
@@ -62,6 +76,7 @@ export async function bffFetch<T>(
   try {
     backendResponse = await fetch(`${BACKEND_URL}${path}`, fetchOptions);
   } catch {
+    console.log(`BFF fetch failed ${url}`);
     return {
       ok: false,
       response: NextResponse.json(

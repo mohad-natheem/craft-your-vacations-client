@@ -1,26 +1,48 @@
 import { NextRequest, NextResponse } from "next/server";
 import { getToken } from "next-auth/jwt";
 
-// Add any path that requires login here
+// Routes that require a valid session
 const PROTECTED_PATHS = ["/destinations", "/packages"];
+
+// Auth pages — redirect away if already logged in
+const AUTH_PATHS = ["/login", "/register"];
 
 export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const token = await getToken({ req: request });
 
-  // Redirect already-logged-in users away from /login
-  if (pathname === "/login" && token) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  // Protect listed paths — redirect unauthenticated users to /login
   const isProtected = PROTECTED_PATHS.some(
     (p) => pathname === p || pathname.startsWith(p + "/"),
   );
+  const isOnboarding = pathname.startsWith("/onboarding");
+  const isAuthPage = AUTH_PATHS.some((p) => pathname === p);
+  const isApiRoute = pathname.startsWith("/api/");
 
+  // Redirect authenticated users away from login/register
+  if (isAuthPage && token) {
+    return NextResponse.redirect(new URL("/", request.url));
+  }
+
+  // Protect onboarding — must be signed in
+  if (isOnboarding && !token) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Protect app routes — must be signed in
   if (isProtected && !token) {
     return NextResponse.redirect(new URL("/login", request.url));
+  }
+
+  // Force onboarding if phone is not yet verified (all page routes, not API calls)
+  if (
+    token &&
+    token.phoneVerified === false &&
+    !isOnboarding &&
+    !isAuthPage &&
+    !isApiRoute
+  ) {
+    return NextResponse.redirect(new URL("/onboarding", request.url));
   }
 
   return NextResponse.next();
