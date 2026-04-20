@@ -80,9 +80,14 @@ Next.js API Route (app/api/...)
 - Always namespace keys by domain (e.g. `['destinations', ...]`) so `invalidateQueries` can target the whole domain
 
 ### Custom Hooks: `hooks/`
-- Every `useQuery` call lives in a dedicated hook file (e.g. `hooks/useDestinations.ts`)
+- Every `useQuery`/`useMutation` call lives in a dedicated hook file (e.g. `hooks/useDestinations.ts`, `hooks/useRegister.ts`)
 - Hooks import from `lib/endpoints.ts` and `lib/queryKeys.ts` — never construct URLs or keys inline
 - Always set a `staleTime` appropriate to how frequently the data changes
+
+### Mutations pattern
+- Use `mutate(payload, { onSuccess, onError })` — never `mutateAsync` + try/catch
+- Error is available as `mutation.error` — do not create a separate error `useState` for mutation errors
+- After a successful mutation, call `queryClient.invalidateQueries` if the mutation affects cached query data
 
 ---
 
@@ -131,12 +136,17 @@ When adding a new data-fetching feature, follow this order:
 
 ## Authentication
 
-- Auth is handled by `@auth0/nextjs-auth0` v4
-- `auth0.middleware(request)` runs in `proxy.ts` and handles all `/api/auth/*` routes (login, callback, logout)
-- Server-side session check: `await auth0.getSession()` (in route handlers or server components)
-- Client-side user: `useUser()` from `@auth0/nextjs-auth0/client`
-- Auth0 client config: `lib/auth0.ts`
-- Public routes that don't require login are listed in `proxy.ts`
+- Auth is handled by **NextAuth v4** (`next-auth`) — credentials + Google OAuth providers
+- NextAuth config: `lib/auth.ts` (handlers, providers, JWT callbacks)
+- Client-side session: `useSession()` from `next-auth/react`; trigger a session refresh with `update()`
+- Session shape includes `session.user.phoneVerified: boolean` — controls onboarding redirect
+- `proxy.ts` is a passthrough — no redirect logic lives there
+
+### Route guards
+Auth redirect logic lives in client-side layouts, **not** `proxy.ts`:
+- `app/(root)/layout.tsx` — protects `/destinations`, `/packages`; redirects unverified users to `/onboarding`
+- `app/(auth)/layout.tsx` — redirects verified users away from `/login`, `/register`; redirects unauthenticated users away from `/onboarding`
+- Guards return `null` while session is loading or when a redirect is imminent (prevents flash of protected content)
 
 ---
 
@@ -152,10 +162,10 @@ hooks/              — React Query hooks (one per resource)
 lib/
   api.ts            — Axios client (browser → Next.js)
   bff.ts            — BFF fetcher (Next.js → .NET)
-  auth0.ts          — Auth0 client instance
+  auth.ts           — NextAuth config (providers, JWT callbacks)
   endpoints.ts      — API call functions grouped by domain
   queryKeys.ts      — TanStack Query key factory
   utils.ts          — Shared utilities (cn, etc.)
 stores/             — Zustand stores (one per concern)
-proxy.ts            — Next.js middleware (route protection + Auth0)
+proxy.ts            — Next.js middleware (passthrough; required by framework)
 ```

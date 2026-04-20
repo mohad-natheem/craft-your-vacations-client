@@ -53,27 +53,27 @@ export default function HomePage() {
         id={"curateddestinations"}
         className="section-gap border-t border-outline"
       >
-        <div className="mx-auto max-w-7xl px-6">
-          <div className="flex flex-row items-center justify-between mb-16">
-            <div className="flex flex-col gap-4">
-              <span className="text-headline-lg text-primary-dark">
-                Curated Destinations
-              </span>
-              <span className="text-text-muted max-w-md">
-                Our signature selection of locations where luxury meets untamed
-                nature.
-              </span>
+        {data && (
+          <div className="mx-auto max-w-7xl px-6">
+            <div className="flex flex-row items-center justify-between mb-16">
+              <div className="flex flex-col gap-4">
+                <span className="text-headline-lg text-primary-dark">
+                  Curated Destinations
+                </span>
+                <span className="text-text-muted max-w-md">
+                  Our signature selection of locations where luxury meets
+                  untamed nature.
+                </span>
+              </div>
+              <div>
+                <Button href="/destinations" variant="text">
+                  View all
+                </Button>
+              </div>
             </div>
-            <div>
-              <Button href="/destinations" variant="text">
-                View all
-              </Button>
-            </div>
-          </div>
 
-          <div className="flex gap-20 overflow-x-auto pb-10 no-scrollbar">
-            {data &&
-              data.slice(0, 5).map((destination, index) => {
+            <div className="flex gap-20 overflow-x-auto pb-10 no-scrollbar">
+              {data.slice(0, 5).map((destination, index) => {
                 const className = index % 2 !== 0 ? "pt-12" : "";
                 return (
                   <div key={index} className={className}>
@@ -91,8 +91,9 @@ export default function HomePage() {
                   </div>
                 );
               })}
+            </div>
           </div>
-        </div>
+        )}
       </section>
     </div>
   );

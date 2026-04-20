@@ -9,7 +9,7 @@ export function DestinationsScreen() {
   const { data, isLoading, isError, error, refetch } = useDestinations();
 
   if (isLoading) {
-    return <LoadingSpinner message="Loading destinations..." />;
+    return <LoadingSpinner message="Loading destinations..." fullScreen={false} />;
   }
 
   if (isError) {

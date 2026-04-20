@@ -3,6 +3,7 @@
 import { useEffect } from "react";
 import { useSession } from "next-auth/react";
 import { useRouter, usePathname, redirect } from "next/navigation";
+import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 
 function AuthGuard({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
@@ -23,6 +24,8 @@ function AuthGuard({ children }: { children: React.ReactNode }) {
       redirect("/");
     }
   }, [session, status, pathname, router]);
+
+  if (status === "loading") return <LoadingSpinner />;
 
   if (pathname === "/login" && session && session?.user?.phoneVerified === true)
     return null;
