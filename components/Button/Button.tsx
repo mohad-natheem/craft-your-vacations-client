@@ -66,7 +66,7 @@ export function Button({
 
     case "error":
       variantClass =
-        "bg-red-700 text-on-primary shadow-ambient hover:opacity-90 rounded-2xl";
+        "bg-red-700 text-white shadow-ambient hover:opacity-90 rounded-2xl";
       sizeClass = sizeClasses[size];
       break;
   }

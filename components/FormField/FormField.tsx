@@ -44,7 +44,7 @@ export function FormField({
         autoComplete={autoComplete}
         required={required}
         className={`w-full px-4 py-3 rounded-xl text-body-md text-text placeholder:text-text-subtle bg-surface-highest border border-outline outline-none transition-all
-         focus:ring-2 focus:ring-primary/50 focus:border-primary/40
+         focus:border-transparent focus:ring-2 focus:ring-primary/50
          disabled:opacity-50 disabled:cursor-not-allowed
          ${hasError ? "ring-2 ring-red-500/50 border-red-500/50" : ""}
        `}

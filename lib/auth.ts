@@ -31,11 +31,11 @@ export const authOptions: NextAuthOptions = {
           });
         } catch (err) {
           console.error("[authorize] fetch threw:", err);
-          return null;
+          throw new Error("ServiceUnavailable");
         }
 
         if (!res.ok) {
-          const error = await res.json();
+          if (res.status >= 500) throw new Error("ServiceUnavailable");
           return null;
         }
 
@@ -80,7 +80,7 @@ export const authOptions: NextAuthOptions = {
               res.status,
               await res.text(),
             );
-            return false;
+            return "/login?error=ServiceUnavailable";
           }
           const backendUser = await res.json();
           console.log("Backend User", backendUser);
@@ -89,7 +89,7 @@ export const authOptions: NextAuthOptions = {
             backendUser.phoneVerified ?? false;
         } catch (err) {
           console.error("[signIn] fetch threw:", err);
-          return false;
+          return "/login?error=ServiceUnavailable";
         }
       }
       return true;

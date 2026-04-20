@@ -9,6 +9,7 @@ import Logo from "@/public/logo.png";
 import LogoText from "@/public/logo_text.png";
 import Button from "@/components/Button/Button";
 import FormField from "@/components/FormField/FormField";
+import AuthCard from "@/components/AuthCard/AuthCard";
 import { authApi } from "@/lib/endpoints";
 
 export default function RegisterPage() {
@@ -59,7 +60,7 @@ export default function RegisterPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4 py-12">
-      <div className="glass ghost-border shadow-ambient rounded-3xl p-10 w-full max-w-sm flex flex-col items-center gap-8">
+      <AuthCard>
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image src={Logo} alt="Logo" className="w-10" />
@@ -172,7 +173,7 @@ export default function RegisterPage() {
             <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
           </p>
         </div>
-      </div>
+      </AuthCard>
     </div>
   );
 }

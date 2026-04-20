@@ -4,8 +4,7 @@ import { Destination } from "@/app/types/api";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const result = await bffFetch<Destination[]>("/api/Destinations", req, {
-    isPublic: false,
-    cache: "no-store",
+    isPublic: true,
   });
 
   if (!result.ok) return result.response;

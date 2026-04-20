@@ -4,11 +4,12 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { signIn } from "next-auth/react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import Logo from "@/public/logo.png";
 import LogoText from "@/public/logo_text.png";
 import Button from "@/components/Button/Button";
 import FormField from "@/components/FormField/FormField";
+import AuthCard from "@/components/AuthCard/AuthCard";
 
 type Tab = "email" | "google";
 
@@ -23,10 +24,15 @@ const GoogleIcon = () => (
 
 export default function LoginPage() {
   const router = useRouter();
+  const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>("email");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [error, setError] = useState("");
+  const [error, setError] = useState(
+    searchParams.get("error") === "ServiceUnavailable"
+      ? "Our servers are temporarily unavailable. Please try again later."
+      : ""
+  );
   const [loading, setLoading] = useState(false);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
@@ -41,6 +47,11 @@ export default function LoginPage() {
     });
 
     setLoading(false);
+
+    if (result?.error === "ServiceUnavailable") {
+      setError("Our servers are temporarily unavailable. Please try again later.");
+      return;
+    }
 
     if (result?.error) {
       setError("Invalid email or password.");
@@ -57,7 +68,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="glass ghost-border shadow-ambient rounded-3xl p-10 w-full max-w-sm flex flex-col items-center gap-8">
+      <AuthCard>
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image src={Logo} alt="Logo" className="w-10" />
@@ -144,7 +155,7 @@ export default function LoginPage() {
             <Link href="/privacy" className="text-primary hover:underline">Privacy Policy</Link>
           </p>
         </div>
-      </div>
+      </AuthCard>
     </div>
   );
 }
