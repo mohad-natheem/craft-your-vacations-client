@@ -228,7 +228,6 @@ function ProfileStep() {
       {
         onSuccess: () => {
           reset();
-          // window.location.href = "/";
           router.replace("/");
         },
       },
