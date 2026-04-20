@@ -22,7 +22,7 @@ export default function HomePage() {
   }
   return (
     <div className="no-scrollbar overflow-y-auto">
-      <section className="relative h-230.25 pl-6 md:pl-30 flex items-center overflow-hidden bg-surface-low">
+      <section className="relative min-h-[75vh] lg:h-230.25 px-6 md:pl-30 md:pr-0 flex items-center overflow-hidden bg-surface-low">
         <div className="z-10 max-w-3xl">
           <span className="label text-primary font-bold tracking-[0.2em] mb-6 block uppercase text-label-sm">
             Elevate Your Perspective
@@ -31,12 +31,12 @@ export default function HomePage() {
             Explore the <br />
             <span className="text-primary italic">Extraordinary</span>
           </h1>
-          <p className="text-text-muted text-xl max-w-xl mb-10 leading-relaxed font-light">
+          <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-10 leading-relaxed font-light">
             Bespoke journeys curated for the discerning traveler. From the
             silence of Nordic fjords to the vibrant pulse of tropical
             archipelagos.
           </p>
-          <div className="flex gap-4">
+          <div className="flex flex-wrap gap-4">
             <Button>Begin Your Story</Button>
             <Button variant="secondary">
               View Collections
@@ -80,7 +80,7 @@ export default function HomePage() {
             </div>
 
             {/* Right — stats */}
-            <div className="flex gap-10 lg:flex-col lg:gap-6 lg:items-end">
+            <div className="grid grid-cols-3 gap-4 lg:flex lg:flex-col lg:gap-6 lg:items-end">
               {[
                 { value: "50+", label: "Destinations" },
                 { value: "10k+", label: "Itineraries crafted" },
@@ -154,7 +154,7 @@ export default function HomePage() {
               </div>
             </div>
 
-            <div className="flex gap-20 overflow-x-auto pb-10 no-scrollbar">
+            <div className="flex gap-6 md:gap-20 overflow-x-auto pb-10 no-scrollbar">
               {data.slice(0, 5).map((destination, index) => {
                 const className = index % 2 !== 0 ? "pt-12" : "";
                 return (

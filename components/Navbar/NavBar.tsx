@@ -4,7 +4,7 @@ import React, { useEffect } from "react";
 import type { NavLink } from "@/app/types/component";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
-import { Search, CircleUser } from "lucide-react";
+import { Search, CircleUser, Menu, X } from "lucide-react";
 import Logo from "@/public/logo.png";
 import LogoText from "@/public/logo_text.png";
 import ToggleTheme from "@/components/ToggleTheme/ToggleTheme";
@@ -101,9 +101,7 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
           aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
           onClick={toggleMobileMenu}
         >
-          <span className="material-symbols-outlined text-[20px]">
-            {mobileMenuOpen ? "close" : "menu"}
-          </span>
+          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
         </button>
       </div>
 
