@@ -35,6 +35,7 @@ export async function proxy(request: NextRequest) {
   }
 
   // Force onboarding if phone is not yet verified (all page routes, not API calls)
+  console.log("Inside Proxy .ts");
   if (
     token &&
     token.phoneVerified === false &&
@@ -42,6 +43,10 @@ export async function proxy(request: NextRequest) {
     !isAuthPage &&
     !isApiRoute
   ) {
+    console.log(
+      "Inside Redirecting to Onboarding phoneVerified:",
+      token.phoneVerified,
+    );
     return NextResponse.redirect(new URL("/onboarding", request.url));
   }
 

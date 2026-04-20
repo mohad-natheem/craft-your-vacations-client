@@ -9,7 +9,10 @@ import LogoText from "@/public/logo_text.png";
 import Button from "@/components/Button/Button";
 import FormField from "@/components/FormField/FormField";
 import { useOnboardingStore } from "@/stores/useOnboardingStore";
-import { phoneApi, usersApi } from "@/lib/endpoints";
+import AuthCard from "@/components/AuthCard/AuthCard";
+import { useSendOtp } from "@/hooks/useSendOtp";
+import { useVerifyOtp } from "@/hooks/useVerifyOtp";
+import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 
 // ─── Progress indicator ────────────────────────────────────────────────────────
 
@@ -44,21 +47,11 @@ function ProgressDots({ current }: { current: (typeof STEPS)[number] }) {
 
 function PhoneStep() {
   const { phone, setPhone, nextStep } = useOnboardingStore();
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const { mutate: sendOtp, isPending, error } = useSendOtp();
 
-  const handleSend = async () => {
+  const handleSend = () => {
     if (!phone.trim()) return;
-    setError("");
-    setLoading(true);
-    try {
-      await phoneApi.sendOtp(phone.trim());
-      nextStep();
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to send OTP.");
-    } finally {
-      setLoading(false);
-    }
+    sendOtp(phone.trim(), { onSuccess: () => nextStep() });
   };
 
   return (
@@ -79,14 +72,14 @@ function PhoneStep() {
         required
         autoComplete="tel"
       />
-      {error && <p className="text-body-sm text-red-400">{error}</p>}
+      {error && <p className="text-body-sm text-red-400">{error.message}</p>}
       <Button
         variant="primary"
         size="md"
         onClick={handleSend}
-        disabled={!phone.trim() || loading}
+        disabled={!phone.trim() || isPending}
       >
-        {loading ? "Sending…" : "Send OTP"}
+        {isPending ? "Sending…" : "Send OTP"}
       </Button>
     </div>
   );
@@ -95,12 +88,20 @@ function PhoneStep() {
 // ─── Step 2: OTP ───────────────────────────────────────────────────────────────
 
 function OtpStep() {
+  const router = useRouter();
   const { phone, nextStep } = useOnboardingStore();
-  const { update, data: session } = useSession();
+  const { update } = useSession();
+  const {
+    mutate: verifyOtp,
+    isPending: verifying,
+    error: verifyError,
+  } = useVerifyOtp();
+  const {
+    mutate: sendOtp,
+    isPending: resending,
+    error: resendError,
+  } = useSendOtp();
   const [otp, setOtp] = useState(["", "", "", "", "", ""]);
-  const [loading, setLoading] = useState(false);
-  const [resending, setResending] = useState(false);
-  const [error, setError] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
 
   const handleChange = (value: string, index: number) => {
@@ -137,34 +138,23 @@ function OtpStep() {
     inputRefs.current[nextEmpty]?.focus();
   };
 
-  const handleVerify = async () => {
+  const handleVerify = () => {
     const code = otp.join("");
     if (code.length < 6) return;
-    setError("");
-    setLoading(true);
-    try {
-      await phoneApi.verifyOtp(phone, code);
-      await update({ phoneVerified: true });
-      nextStep();
-    } catch (err: unknown) {
-      setError(
-        err instanceof Error ? err.message : "Invalid OTP. Please try again.",
-      );
-    } finally {
-      setLoading(false);
-    }
+    verifyOtp(
+      { mobileNumber: phone, otp: code },
+      {
+        onSuccess: async () => {
+          await update({ phoneVerified: true });
+          router.refresh();
+          nextStep();
+        },
+      },
+    );
   };
 
-  const handleResend = async () => {
-    setError("");
-    setResending(true);
-    try {
-      await phoneApi.sendOtp(phone);
-    } catch {
-      setError("Failed to resend OTP.");
-    } finally {
-      setResending(false);
-    }
+  const handleResend = () => {
+    sendOtp(phone);
   };
 
   return (
@@ -195,17 +185,19 @@ function OtpStep() {
         ))}
       </div>
 
-      {error && (
-        <p className="text-body-sm text-red-400 text-center">{error}</p>
+      {(verifyError || resendError) && (
+        <p className="text-body-sm text-red-400 text-center">
+          {(verifyError ?? resendError)!.message}
+        </p>
       )}
 
       <Button
         variant="primary"
         size="md"
         onClick={handleVerify}
-        disabled={otp.join("").length < 6 || loading}
+        disabled={otp.join("").length < 6 || verifying}
       >
-        {loading ? "Verifying…" : "Verify"}
+        {verifying ? "Verifying…" : "Verify"}
       </Button>
 
       <button
@@ -223,30 +215,29 @@ function OtpStep() {
 
 function ProfileStep() {
   const router = useRouter();
+
   const { reset } = useOnboardingStore();
+  const { mutate: updateProfile, isPending, error } = useUpdateProfile();
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [nationality, setNationality] = useState("");
   const [designation, setDesignation] = useState("");
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
 
-  const handleComplete = async () => {
-    setError("");
-    setLoading(true);
-    try {
-      await usersApi.updateProfile({ dateOfBirth, nationality, designation });
-      reset();
-      router.push("/");
-    } catch (err: unknown) {
-      setError(err instanceof Error ? err.message : "Failed to save profile.");
-    } finally {
-      setLoading(false);
-    }
+  const handleComplete = () => {
+    updateProfile(
+      { dateOfBirth, nationality, designation },
+      {
+        onSuccess: () => {
+          reset();
+          // window.location.href = "/";
+          router.replace("/");
+        },
+      },
+    );
   };
 
   const handleSkip = () => {
     reset();
-    router.push("/");
+    window.location.href = "/";
   };
 
   return (
@@ -282,15 +273,15 @@ function ProfileStep() {
         />
       </div>
 
-      {error && <p className="text-body-sm text-red-400">{error}</p>}
+      {error && <p className="text-body-sm text-red-400">{error.message}</p>}
 
       <Button
         variant="primary"
         size="md"
         onClick={handleComplete}
-        disabled={loading}
+        disabled={isPending}
       >
-        {loading ? "Saving…" : "Complete setup"}
+        {isPending ? "Saving…" : "Complete setup"}
       </Button>
 
       <button
@@ -310,7 +301,7 @@ export default function OnboardingPage() {
 
   return (
     <div className="min-h-screen flex items-center justify-center px-4">
-      <div className="glass ghost-border shadow-ambient rounded-3xl p-10 w-full max-w-sm flex flex-col items-center gap-8">
+      <AuthCard>
         {/* Logo */}
         <div className="flex items-center gap-2">
           <Image src={Logo} alt="Logo" className="w-10" />
@@ -329,7 +320,7 @@ export default function OnboardingPage() {
         {step === "phone" && <PhoneStep />}
         {step === "otp" && <OtpStep />}
         {step === "profile" && <ProfileStep />}
-      </div>
+      </AuthCard>
     </div>
   );
 }

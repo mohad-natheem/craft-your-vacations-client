@@ -6,7 +6,7 @@ import { queryKeys } from "@/lib/queryKeys";
 
 export function useDestinations() {
   return useQuery({
-    queryKey: queryKeys.destinations,
+    queryKey: queryKeys.destinations.all(),
     queryFn: async () => {
       const result = await destinationsApi.getAll();
       console.log("queryFn result:", result); // check this in browser console

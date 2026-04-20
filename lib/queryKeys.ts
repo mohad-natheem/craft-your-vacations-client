@@ -1,4 +1,6 @@
 export const queryKeys = {
-  destinations: ['destinations'] as const,
+  destinations: {
+    all: () => ['destinations'] as const,
+  },
 } as const;
  
