@@ -19,7 +19,7 @@ export function DestinationCard({
 }: DestinationCardProps) {
   const cardContent = (
     <div
-      className={`group relative overflow-hidden rounded-2xl cursor-pointer ${className}`}
+      className={`group relative overflow-hidden rounded-2xl cursor-pointer shadow-lg shadow-primary/20 ${className}`}
     >
       {/* Image */}
       <div className="relative aspect-3/4 overflow-hidden">

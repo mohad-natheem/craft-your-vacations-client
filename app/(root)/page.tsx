@@ -1,7 +1,13 @@
 "use client";
 import Button from "@/components/Button/Button";
 import Section from "@/components/Section/Sections";
-import { Loader, LucideArrowRightCircle } from "lucide-react";
+import {
+  Loader,
+  LucideArrowRightCircle,
+  Compass,
+  PenLine,
+  Plane,
+} from "lucide-react";
 import Image from "next/image";
 import IntroIcon1 from "@/public/introImage1.jpg";
 import IntroIcon5 from "@/public/introImage5.jpg";
@@ -16,7 +22,7 @@ export default function HomePage() {
   }
   return (
     <div className="no-scrollbar overflow-y-auto">
-      <section className="relative h-230.25 pl-6 md:pl-30 flex items-center overflow-hidden bg-surface-low mb-16">
+      <section className="relative h-230.25 pl-6 md:pl-30 flex items-center overflow-hidden bg-surface-low">
         <div className="z-10 max-w-3xl">
           <span className="label text-primary font-bold tracking-[0.2em] mb-6 block uppercase text-label-sm">
             Elevate Your Perspective
@@ -49,12 +55,88 @@ export default function HomePage() {
           </div>
         </div>
       </section>
+      {/* About Us */}
+      <section id="about" className="mt-16">
+        <div className="mx-auto max-w-7xl px-6">
+          {/* Top block */}
+          <div className="flex flex-col lg:flex-row lg:items-center gap-12 mb-16">
+            {/* Left — text */}
+            <div className="flex-1 flex flex-col gap-6">
+              <span className="text-label-sm text-primary uppercase tracking-[0.2em]">
+                Who We Are
+              </span>
+              <h2 className="text-display-sm text-text tracking-tighter leading-tight">
+                Travel on{" "}
+                <span className="text-primary italic">your terms</span>
+              </h2>
+              <p className="text-body-lg text-text-muted max-w-lg leading-relaxed font-light">
+                We&apos;re not a travel agency — we&apos;re your planning
+                partner. At CraftYourVacations, we believe the best journeys are
+                the ones you design yourself. We give you the destinations, the
+                insights, and the structure. You bring the curiosity. No rigid
+                packages, no cookie-cutter schedules — just your story, told
+                your way.
+              </p>
+            </div>
+
+            {/* Right — stats */}
+            <div className="flex gap-10 lg:flex-col lg:gap-6 lg:items-end">
+              {[
+                { value: "50+", label: "Destinations" },
+                { value: "10k+", label: "Itineraries crafted" },
+                { value: "100%", label: "Your design" },
+              ].map(({ value, label }) => (
+                <div key={label} className="flex flex-col gap-1 lg:text-right">
+                  <span className="text-display-sm text-primary font-bold tracking-tighter">
+                    {value}
+                  </span>
+                  <span className="text-label-md text-text-subtle">
+                    {label}
+                  </span>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Three pillar cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {[
+              {
+                icon: Compass,
+                title: "Dream It",
+                body: "Tell us where your curiosity leads. We surface destinations that match your pace, your taste, and your sense of wonder.",
+              },
+              {
+                icon: PenLine,
+                title: "Craft It",
+                body: "Build your itinerary day by day. Every stay, every experience, every detour — yours to shape exactly as you imagine.",
+              },
+              {
+                icon: Plane,
+                title: "Live It",
+                body: "Set off with confidence. Every detail planned, every moment yours to own. No surprises unless you want them.",
+              },
+            ].map(({ icon: Icon, title, body }) => (
+              <div
+                key={title}
+                className="glass ghost-border rounded-3xl p-8 flex flex-col gap-4 shadow-lg shadow-primary/20"
+              >
+                <Icon className="w-7 h-7 text-primary-app" strokeWidth={1.5} />
+                <h3 className="text-headline-md text-text">{title}</h3>
+                <p className="text-body-sm text-text-muted leading-relaxed">
+                  {body}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
       <section
         id={"curateddestinations"}
-        className="section-gap border-t border-outline"
+        className="mt-16 border-t border-outline"
       >
         {data && (
-          <div className="mx-auto max-w-7xl px-6">
+          <div className="mx-auto max-w-7xl px-6 mt-16 ">
             <div className="flex flex-row items-center justify-between mb-16">
               <div className="flex flex-col gap-4">
                 <span className="text-headline-lg text-primary-dark">
