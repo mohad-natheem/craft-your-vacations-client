@@ -2,6 +2,7 @@ import { api } from "@/lib/api";
 import type {
   Destination,
   DestinationDetail,
+  PackageDetail,
   User,
   OtpResponse,
   RegisterRequest,
@@ -13,6 +14,11 @@ import type {
 export const destinationsApi = {
   getAll: () => api.get<Destination[]>("destinations"),
   getBySlug: (slug: string) => api.get<DestinationDetail>(`destinations/${slug}`),
+};
+
+export const packagesApi = {
+  getBySlugAndKey: (slug: string, key: string) =>
+    api.get<PackageDetail>(`destinations/${slug}/packages/${key}`),
 };
 
 export const authApi = {

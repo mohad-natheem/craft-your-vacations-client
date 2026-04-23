@@ -15,6 +15,7 @@ export function PackageCard({
   priceLabel = "per person",
   features,
   ctaLabel = "View Details",
+  href,
   onCtaClick,
   highlighted = false,
   className = "",
@@ -84,6 +85,7 @@ export function PackageCard({
         {/* CTA */}
         <Button
           variant={highlighted ? "primary" : "secondary"}
+          href={href}
           onClick={onCtaClick}
           className="w-full justify-center mt-4"
         >

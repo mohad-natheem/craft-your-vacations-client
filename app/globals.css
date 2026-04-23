@@ -45,6 +45,14 @@
   --font-display: "Plus Jakarta Sans", sans-serif;
   --font-body: "Plus Jakarta Sans", sans-serif;
 
+  /* --- Hero image overlays (same for both themes — always on top of photos) --- */
+  --color-overlay: #000000;
+  --color-on-overlay: #ffffff;
+
+  /* --- Hero layout heights --- */
+  --hero-height: 75vh;
+  --hero-height-compact: 65vh;
+
   /* --- Spacing rhythm --- */
   --section-gap: 80px;
 }
@@ -118,6 +126,10 @@
   --color-text-muted: var(--color-text-muted);
   --color-text-subtle: var(--color-text-subtle);
   --color-outline: var(--color-outline);
+
+  /* Overlay */
+  --color-overlay: var(--color-overlay);
+  --color-on-overlay: var(--color-on-overlay);
 
   /* Font families */
   --font-sans: var(--font-body);
@@ -284,6 +296,11 @@
   /* Section spacing rhythm */
   .section-gap {
     padding-block: var(--section-gap);
+  }
+
+  /* Tight line-height for large display headings on hero images */
+  .leading-hero {
+    line-height: 0.9;
   }
 
   /* Hide scrollbar but allow scrolling */

@@ -3,5 +3,8 @@ export const queryKeys = {
     all: () => ['destinations'] as const,
     detail: (slug: string) => ['destinations', 'detail', slug] as const,
   },
+  packages: {
+    detail: (slug: string, key: string) => ['packages', 'detail', slug, key] as const,
+  },
 } as const;
  

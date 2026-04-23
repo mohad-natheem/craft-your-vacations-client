@@ -43,6 +43,7 @@ export interface PackageCardData {
   priceLabel?: string;
   features: PackageFeature[];
   ctaLabel?: string;
+  href?: string;
   onCtaClick?: () => void;
 }
 

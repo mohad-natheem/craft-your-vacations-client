@@ -10,7 +10,6 @@ import {
   ScrollText,
   ChevronLeft,
 } from "lucide-react";
-import Link from "next/link";
 import { useDestination } from "@/hooks/useDestination";
 import { useDestinations } from "@/hooks/useDestinations";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
@@ -18,6 +17,7 @@ import ErrorState from "@/components/ErrorState/ErrorState";
 import Section from "@/components/Section/Sections";
 import PackageCard from "@/components/PackageCard/PackageCard";
 import DestinationLandscapeCard from "@/components/DestinationLandscapeCard/DestinationLandscapeCard";
+import { useRouter } from "next/navigation";
 
 export default function DestinationDetailPage({
   params,
@@ -27,6 +27,7 @@ export default function DestinationDetailPage({
   const { id } = use(params);
   const { data, isLoading, isError, error, refetch } = useDestination(id);
   const { data: allDestinations } = useDestinations();
+  const router = useRouter();
 
   if (isLoading) {
     return (
@@ -60,9 +61,9 @@ export default function DestinationDetailPage({
     allDestinations?.filter((d) => d.slug !== id).slice(0, 4) ?? [];
 
   return (
-    <div className="pt-(--section-gap)">
+    <div className="section-gap">
       {/* Hero */}
-      <div className="relative w-full h-[75vh] min-h-130 overflow-hidden rounded-3xl mx-auto max-w-7xl px-6">
+      <div className="relative w-full h-(--hero-height) min-h-130 overflow-hidden rounded-3xl mx-auto max-w-7xl px-6">
         <Image
           src={imagePath}
           alt={title}
@@ -72,18 +73,16 @@ export default function DestinationDetailPage({
         />
 
         {/* Layered gradients for depth */}
-        <div className="absolute inset-0 rounded-3xl bg-linear-to-t from-black/90 via-black/40 to-black/10" />
-        <div className="absolute inset-0 rounded-3xl bg-linear-to-r from-black/50 via-transparent to-transparent" />
+        <div className="absolute inset-0 rounded-3xl bg-linear-to-t from-overlay/90 via-overlay/40 to-overlay/10" />
+        <div className="absolute inset-0 rounded-3xl bg-linear-to-r from-overlay/50 via-transparent to-transparent" />
 
         {/* Breadcrumb */}
-        <div className="absolute top-6 left-6">
-          <Link
-            href="/destinations"
-            className="flex items-center gap-1.5 text-white/70 hover:text-white text-label-sm transition-colors"
-          >
-            <ChevronLeft className="w-4 h-4" />
-            Destinations
-          </Link>
+        <div
+          onClick={() => router.back()}
+          className="absolute top-6 left-6 flex items-center gap-1.5 text-on-overlay/70 hover:text-on-overlay text-label-sm transition-colors cursor-pointer"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          Destinations
         </div>
 
         {/* Bottom content */}
@@ -93,7 +92,7 @@ export default function DestinationDetailPage({
             {destinationCities?.map((city) => (
               <span
                 key={city}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/10 backdrop-blur-sm border border-white/20 text-label-sm text-primary-app uppercase tracking-widest"
+                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-on-overlay/10 backdrop-blur-sm border border-on-overlay/20 text-label-sm text-primary-app uppercase tracking-widest"
               >
                 <MapPin className="w-3 h-3" />
                 {city}
@@ -102,27 +101,27 @@ export default function DestinationDetailPage({
           </div>
 
           {/* Title */}
-          <h1 className="text-display-xl md:text-display-xxl text-white tracking-tighter leading-[0.9] mb-8">
+          <h1 className="text-display-xl md:text-display-xxl text-on-overlay leading-hero mb-8">
             {title}
           </h1>
 
           {/* Stat chips row */}
           <div className="flex flex-wrap gap-3">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
               <DollarSign className="w-4 h-4 text-primary-app" />
-              <span className="text-white text-body-sm font-medium">
+              <span className="text-on-overlay text-body-sm font-medium">
                 From ${minPackagePrice.toLocaleString()}
               </span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
               <Package className="w-4 h-4 text-primary-app" />
-              <span className="text-white text-body-sm font-medium">
+              <span className="text-on-overlay text-body-sm font-medium">
                 {packages.length} Packages
               </span>
             </div>
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/10 backdrop-blur-md border border-white/15">
+            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
               <Clock className="w-4 h-4 text-primary-app" />
-              <span className="text-white text-body-sm font-medium">
+              <span className="text-on-overlay text-body-sm font-medium">
                 {Math.min(...packages.map((p) => p.days))}–
                 {Math.max(...packages.map((p) => p.days))} Days
               </span>
@@ -215,6 +214,7 @@ export default function DestinationDetailPage({
                 duration={`${pkg.days} Days`}
                 price={`$${pkg.price.toLocaleString()}`}
                 priceLabel="per person"
+                href={`/destinations/${id}/packages/${pkg.key}`}
                 features={[
                   {
                     icon: <Clock className="w-4 h-4" />,

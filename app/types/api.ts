@@ -21,6 +21,36 @@ export interface DestinationPackage {
   excerpt: string;
 }
 
+export type ActivityType =
+  | "transport"
+  | "leisure"
+  | "sightseeing"
+  | "dining"
+  | "cultural"
+  | "adventure";
+
+export interface Activity {
+  time: string;
+  description: string;
+  type: ActivityType;
+}
+
+export interface ItineraryDay {
+  dayNumber: number;
+  title: string;
+  activities: Activity[];
+}
+
+export interface PackageDetail {
+  id: number;
+  key: string;
+  title: string;
+  days: number;
+  price: number;
+  excerpt: string;
+  itinerary: ItineraryDay[];
+}
+
 export interface Destination {
   id: number;
   slug: string;
