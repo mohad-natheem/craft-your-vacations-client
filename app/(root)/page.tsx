@@ -145,7 +145,7 @@ export default function HomePage() {
           <div className="mx-auto max-w-7xl px-6 mt-16 ">
             <div className="flex flex-row items-center justify-between mb-16">
               <div className="flex flex-col gap-4">
-                <span className="text-headline-lg text-primary-dark">
+                <span className="text-headline-lg text-text">
                   Curated Destinations
                 </span>
                 <span className="text-text-muted max-w-md">

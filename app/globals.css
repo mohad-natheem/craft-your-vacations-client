@@ -59,12 +59,12 @@
 
 [data-theme="dark"] {
   /* --- Backgrounds / Surfaces (darkest → lightest) --- */
-  --color-base: #060e20; /* surface_container_lowest — sunken cards */
-  --color-bg: #0b1326; /* surface / foundation — page background  */
-  --color-surface-low: #131b2e; /* surface_container_low  — section areas  */
-  --color-surface: #171f33; /* surface_container      — cards, navbar  */
-  --color-surface-high: #222a3d; /* surface_container_high — modals, menus */
-  --color-surface-highest: #2a3349; /* surface_container_highest — inputs      */
+  --color-base: #080808; /* surface_container_lowest — sunken cards */
+  --color-bg: #0e0e0e; /* surface / foundation — page background  */
+  --color-surface-low: #161616; /* surface_container_low  — section areas  */
+  --color-surface: #1c1c1c; /* surface_container      — cards, navbar  */
+  --color-surface-high: #242424; /* surface_container_high — modals, menus */
+  --color-surface-highest: #2e2e2e; /* surface_container_highest — inputs      */
 
   /* --- Brand / Accent --- */
   --color-primary: #75d2f7; /* Signature cyan — CTAs, active states   */
@@ -73,19 +73,19 @@
   --color-gradient-end: #3a9fc2; /* Low-emphasis primary tint              */
 
   /* --- Text / On-surface --- */
-  --color-text: #dae2fd; /* on_surface — primary readable text     */
-  --color-text-muted: #8a99c2; /* on_surface_variant — secondary text    */
-  --color-text-subtle: #4a5880; /* Tertiary / disabled text               */
-  --color-on-primary: #0b1326; /* Text on cyan buttons                   */
+  --color-text: #e2e4e8; /* on_surface — primary readable text     */
+  --color-text-muted: #8d9499; /* on_surface_variant — secondary text    */
+  --color-text-subtle: #525a62; /* Tertiary / disabled text               */
+  --color-on-primary: #0e0e0e; /* Text on cyan buttons                   */
 
   /* App main theme color will be the same for both themes */
   --color-primary-app: #75d2f7;
 
   /* --- Ghost Border fallback (accessibility only) --- */
-  --color-outline: rgba(62, 77, 120, 0.15); /* outline_variant @15%   */
+  --color-outline: rgba(120, 120, 120, 0.15); /* outline_variant @15%   */
 
   /* --- Glassmorphism --- */
-  --glass-bg: rgba(23, 31, 51, 0.72); /* surface + 72% opacity  */
+  --glass-bg: rgba(18, 18, 18, 0.72); /* surface + 72% opacity  */
   --glass-blur: 16px;
 
   /* --- Typography Scale --- */
