@@ -7,15 +7,9 @@ import type { Session } from "next-auth";
 
 const queryClient = new QueryClient();
 
-export function Providers({
-  children,
-  session,
-}: {
-  children: React.ReactNode;
-  session: Session | null;
-}) {
+export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider session={session}>
+    <SessionProvider>
       <ThemeProvider
         attribute="data-theme"
         defaultTheme="dark"
