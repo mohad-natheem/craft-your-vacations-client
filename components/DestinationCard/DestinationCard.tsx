@@ -4,6 +4,7 @@ import React from "react";
 import type { DestinationCardData } from "@/app/types/component";
 import Image from "next/image";
 import { Destination } from "@/app/types/api";
+import Link from "next/link";
 
 interface DestinationCardProps extends DestinationCardData {
   className?: string;
@@ -47,9 +48,9 @@ export function DestinationCard({
 
   if (href) {
     return (
-      <a href={href} className="block">
+      <Link href={href} className="block">
         {cardContent}
-      </a>
+      </Link>
     );
   }
 
