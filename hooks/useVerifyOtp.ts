@@ -2,10 +2,10 @@
 
 import { useMutation } from "@tanstack/react-query";
 import { phoneApi } from "@/lib/endpoints";
+import type { VerifyOtpRequest } from "@/app/types/api";
 
 export function useVerifyOtp() {
   return useMutation({
-    mutationFn: ({ mobileNumber, otp }: { mobileNumber: string; otp: string }) =>
-      phoneApi.verifyOtp(mobileNumber, otp),
+    mutationFn: (body: VerifyOtpRequest) => phoneApi.verifyOtp(body),
   });
 }

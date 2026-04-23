@@ -23,34 +23,41 @@ export default function HomePage() {
   return (
     <div className="no-scrollbar overflow-y-auto">
       <section className="relative min-h-[75vh] lg:h-230.25 px-6 md:pl-30 md:pr-0 flex items-center overflow-hidden bg-surface-low">
-        <div className="z-10 max-w-3xl">
-          <span className="label text-primary font-bold tracking-[0.2em] mb-6 block uppercase text-label-sm">
-            Elevate Your Perspective
-          </span>
-          <h1 className="text-display-xl md:text-display-xxl text-text tracking-tighter leading-[0.9] mb-8">
-            Explore the <br />
-            <span className="text-primary italic">Extraordinary</span>
-          </h1>
-          <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-10 leading-relaxed font-light">
-            Bespoke journeys curated for the discerning traveler. From the
-            silence of Nordic fjords to the vibrant pulse of tropical
-            archipelagos.
-          </p>
-          <div className="flex flex-wrap gap-4">
-            <Button>Begin Your Story</Button>
-            <Button variant="secondary">
-              View Collections
-              <LucideArrowRightCircle />
-            </Button>
-          </div>
-        </div>
-        <div className="absolute right-[-5%] top-[10%] w-1/2 h-[80%] z-0 hidden lg:block">
-          <div className="relative w-full h-full">
-            <div className="absolute top-0 right-0 w-4/5 h-[85%] rounded-3xl overflow-hidden shadow-2xl z-20">
-              <Image src={IntroIcon1} fill objectFit="cover" alt="Intro icon" />
+        <div className="flex flex-row max-w-6xl">
+          <div className="z-10 max-w-3xl">
+            <span className="label text-primary font-bold tracking-[0.2em] mb-6 block uppercase text-label-sm">
+              Elevate Your Perspective
+            </span>
+            <h1 className="text-display-xl md:text-display-xxl text-text tracking-tighter leading-[0.9] mb-8">
+              Explore the <br />
+              <span className="text-primary italic">Extraordinary</span>
+            </h1>
+            <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-10 leading-relaxed font-light">
+              Bespoke journeys curated for the discerning traveler. From the
+              silence of Nordic fjords to the vibrant pulse of tropical
+              archipelagos.
+            </p>
+            <div className="flex flex-wrap gap-4">
+              <Button>Begin Your Story</Button>
+              <Button variant="secondary">
+                View Collections
+                <LucideArrowRightCircle />
+              </Button>
             </div>
-            <div className="absolute bottom-0 left-0 w-3/5 h-[50%] rounded-3xl overflow-hidden shadow-2xl z-30 border-8 border-white">
-              <Image src={IntroIcon5} alt="Intro icon" />
+          </div>
+          <div className="absolute right-[-5%] top-[10%] w-1/2 h-[80%] z-0 hidden lg:block">
+            <div className="relative w-full h-full">
+              <div className="absolute top-0 right-0 w-4/5 h-[85%] rounded-3xl overflow-hidden shadow-2xl z-20">
+                <Image
+                  src={IntroIcon1}
+                  fill
+                  objectFit="cover"
+                  alt="Intro icon"
+                />
+              </div>
+              <div className="absolute bottom-0 left-0 w-3/5 h-[50%] rounded-3xl overflow-hidden shadow-2xl z-30 border-8 border-white">
+                <Image src={IntroIcon5} alt="Intro icon" />
+              </div>
             </div>
           </div>
         </div>
@@ -160,14 +167,12 @@ export default function HomePage() {
                 return (
                   <div key={index} className={className}>
                     <DestinationCard
-                      href="/"
+                      href={`/destinations/${destination.slug}`}
                       className={"w-60 md:w-80"}
                       key={destination.id}
                       imagePath={destination.imagePath}
                       title={destination.title}
-                      destinationCities={
-                        destination.detailJson.destinationCities
-                      }
+                      destinationCities={destination.destinationCities}
                       content={destination.content}
                     />
                   </div>

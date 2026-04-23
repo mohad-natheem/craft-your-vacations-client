@@ -1,3 +1,5 @@
+import React from "react";
+
 export type ButtonVariant = "primary" | "secondary" | "error" | "icon" | "text";
 export type ButtonSize = "sm" | "md" | "lg";
 
@@ -5,6 +7,7 @@ export interface NavLink {
   label: string;
   href: string;
   isActive?: boolean;
+  replace?: boolean;
 }
 
 export interface ColorSwatch {
@@ -29,7 +32,7 @@ export interface DestinationCardData {
 }
 
 export interface PackageFeature {
-  icon: string;
+  icon: React.ReactNode;
   text: string;
 }
 

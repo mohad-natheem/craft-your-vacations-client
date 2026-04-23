@@ -13,16 +13,12 @@ export interface PaginatedResponse<T> {
 }
 
 export interface DestinationPackage {
+  id: number;
   key: string;
   days: number;
   price: number;
   title: string;
   excerpt: string;
-}
-
-export interface DestinationDetail {
-  packages: DestinationPackage[];
-  destinationCities: string[];
 }
 
 export interface Destination {
@@ -32,7 +28,12 @@ export interface Destination {
   imagePath: string;
   content: string;
   minPackagePrice: number;
-  detailJson: DestinationDetail;
+  isFeatured: boolean;
+  destinationCities: string[];
+}
+
+export interface DestinationDetail extends Destination {
+  packages: DestinationPackage[];
 }
 
 export interface User {
@@ -46,4 +47,26 @@ export interface User {
 export interface OtpResponse {
   success: boolean;
   message: string;
+}
+
+export interface RegisterRequest {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+}
+
+export interface UpdateProfileRequest {
+  dateOfBirth?: string;
+  nationality?: string;
+  designation?: string;
+}
+
+export interface SendOtpRequest {
+  mobileNumber: string;
+}
+
+export interface VerifyOtpRequest {
+  mobileNumber: string;
+  otp: string;
 }

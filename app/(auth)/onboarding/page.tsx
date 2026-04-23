@@ -51,7 +51,7 @@ function PhoneStep() {
 
   const handleSend = () => {
     if (!phone.trim()) return;
-    sendOtp(phone.trim(), { onSuccess: () => nextStep() });
+    sendOtp({ mobileNumber: phone.trim() }, { onSuccess: () => nextStep() });
   };
 
   return (
@@ -154,7 +154,7 @@ function OtpStep() {
   };
 
   const handleResend = () => {
-    sendOtp(phone);
+    sendOtp({ mobileNumber: phone });
   };
 
   return (
@@ -227,24 +227,24 @@ function ProfileStep() {
       { dateOfBirth, nationality, designation },
       {
         onSuccess: () => {
-          reset();
           router.replace("/");
+          reset();
         },
       },
     );
   };
 
   const handleSkip = () => {
+    router.replace("/");
     reset();
-    window.location.href = "/";
   };
 
   return (
     <div className="w-full flex flex-col gap-6">
       <div className="text-center flex flex-col gap-1">
-        <h2 className="text-headline-sm text-text">Complete your profile</h2>
+        <h2 className="text-headline-sm text-text">Tell us about yourself</h2>
         <p className="text-body-sm text-text-muted">
-          Help us personalise your travel experience
+          A little about you helps us craft journeys made just for you
         </p>
       </div>
 

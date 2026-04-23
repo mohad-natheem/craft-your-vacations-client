@@ -20,7 +20,7 @@ interface NavbarProps {
 }
 
 const defaultLinks: NavLink[] = [
-  { label: "Home", href: "/" },
+  { label: "Home", href: "/", replace: true },
   { label: "Destinations", href: "/destinations" },
   { label: "Packages", href: "/packages" },
   { label: "Components", href: "/components" },
@@ -41,12 +41,12 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
     <nav
       className={`fixed top-0 inset-x-0 z-50 glass border-b border-outline ${className}`}
     >
-      <div className="mx-auto px-10 h-16 flex items-center justify-between">
+      <div className="mx-auto px-10 h-16 flex items-center justify-around">
         {/* Logo */}
-        <div className="flex items-center justify-center gap-2">
+        <Link href="/" replace className="flex items-center justify-center gap-2">
           <Image src={Logo} alt="Logo" className="w-10" />
           <Image src={LogoText} alt="Logo" className="w-25" />
-        </div>
+        </Link>
 
         {/* Desktop links */}
         <ul className="hidden md:flex items-center gap-1">
@@ -54,7 +54,7 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
             const isActive = link.href === pathname;
             return (
               <li key={link.href}>
-                <Link href={link.href}>
+                <Link href={link.href} replace={link.replace}>
                   <div
                     className={`px-4 py-2 text-body-md transition-colors relative pb-0.5 ${
                       isActive

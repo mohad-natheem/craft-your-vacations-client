@@ -7,11 +7,7 @@ import { queryKeys } from "@/lib/queryKeys";
 export function useDestinations() {
   return useQuery({
     queryKey: queryKeys.destinations.all(),
-    queryFn: async () => {
-      const result = await destinationsApi.getAll();
-      console.log("queryFn result:", result); // check this in browser console
-      return result;
-    },
+    queryFn: () => destinationsApi.getAll(),
     retry: 3,
     staleTime: 1000 * 60 * 5, // cache for 5 minutes before marking stale
   });

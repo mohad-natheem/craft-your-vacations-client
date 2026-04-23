@@ -51,9 +51,7 @@ export function PackageCard({
             key={i}
             className="flex items-center gap-3 text-body-md text-text-muted"
           >
-            <span className="material-symbols-outlined text-[18px] text-primary shrink-0">
-              {feature.icon}
-            </span>
+            <span className="text-primary shrink-0">{feature.icon}</span>
             {feature.text}
           </li>
         ))}
