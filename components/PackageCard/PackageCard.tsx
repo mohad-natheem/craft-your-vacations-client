@@ -1,6 +1,7 @@
 import React from "react";
 import type { PackageCardData } from "@/app/types/component";
 import { Button } from "../Button/Button";
+import { Clock } from "lucide-react";
 
 interface PackageCardProps extends PackageCardData {
   highlighted?: boolean;
@@ -13,58 +14,82 @@ export function PackageCard({
   price,
   priceLabel = "per person",
   features,
-  ctaLabel = "Book Now",
+  ctaLabel = "View Details",
   onCtaClick,
   highlighted = false,
   className = "",
 }: PackageCardProps) {
   return (
     <div
-      className={`flex flex-col gap-6 rounded-2xl p-6 transition-all ${
+      className={`relative flex flex-col rounded-3xl overflow-hidden transition-all duration-300 hover:-translate-y-1 ${
         highlighted
-          ? "bg-surface-high border border-primary shadow-ambient"
-          : "bg-surface border-b-4 border-primary/20 hover:border-primary"
+          ? "bg-surface-high border border-primary/50 shadow-ambient hover:shadow-primary/20 hover:shadow-xl"
+          : "bg-surface border border-outline hover:border-primary/30 hover:shadow-lg"
       } ${className}`}
     >
-      {highlighted && (
-        <div className="self-start px-3 py-1 rounded-full bg-primary/20 text-primary text-label-sm">
-          Most Popular
+      {/* Gradient accent top bar */}
+      <div
+        className={`h-1 w-full ${highlighted ? "btn-gradient" : "bg-outline"}`}
+      />
+
+      <div className="flex flex-col gap-5 p-6 flex-1">
+        {/* Badge + Header */}
+        <div className="flex flex-col gap-3">
+          {highlighted && (
+            <div className="self-start px-3 py-1 rounded-full btn-gradient text-white text-label-sm font-semibold tracking-wide">
+              Most Popular
+            </div>
+          )}
+          <div>
+            <h3 className="text-headline-md text-text">{title}</h3>
+            <div className="flex items-center gap-1.5 text-text-muted text-body-sm mt-1.5">
+              <Clock className="w-3.5 h-3.5 shrink-0" />
+              <span>{duration}</span>
+            </div>
+          </div>
         </div>
-      )}
 
-      {/* Header */}
-      <div>
-        <h3 className="text-headline-md text-text">{title}</h3>
-        <p className="text-body-sm text-text-muted mt-1">{duration}</p>
-      </div>
-
-      {/* Price */}
-      <div>
-        <span className="text-display-sm text-primary">{price}</span>
-        <span className="text-body-sm text-text-muted ml-2">{priceLabel}</span>
-      </div>
-
-      {/* Features */}
-      <ul className="flex flex-col gap-3">
-        {features.map((feature, i) => (
-          <li
-            key={i}
-            className="flex items-center gap-3 text-body-md text-text-muted"
+        {/* Price */}
+        <div className="flex items-end gap-2 pb-5 border-b border-outline">
+          <span
+            className={`text-display-sm font-bold leading-none ${highlighted ? "text-primary" : "text-text"}`}
           >
-            <span className="text-primary shrink-0">{feature.icon}</span>
-            {feature.text}
-          </li>
-        ))}
-      </ul>
+            {price}
+          </span>
+          <span className="text-body-sm text-text-muted mb-0.5">
+            {priceLabel}
+          </span>
+        </div>
 
-      {/* CTA */}
-      <Button
-        variant={highlighted ? "primary" : "secondary"}
-        onClick={onCtaClick}
-        className="w-full justify-center mt-auto"
-      >
-        {ctaLabel}
-      </Button>
+        {/* Features */}
+        <ul className="flex flex-col gap-3 flex-1">
+          {features.map((feature, i) => (
+            <li key={i} className="flex items-start gap-3">
+              <span
+                className={`mt-0.5 shrink-0 w-7 h-7 rounded-xl flex items-center justify-center ${
+                  highlighted
+                    ? "bg-primary/15 text-primary"
+                    : "bg-surface-high text-text-muted"
+                }`}
+              >
+                {feature.icon}
+              </span>
+              <span className="text-body-sm text-text-muted leading-relaxed">
+                {feature.text}
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {/* CTA */}
+        <Button
+          variant={highlighted ? "primary" : "secondary"}
+          onClick={onCtaClick}
+          className="w-full justify-center mt-4"
+        >
+          {ctaLabel}
+        </Button>
+      </div>
     </div>
   );
 }
