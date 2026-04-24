@@ -37,11 +37,11 @@ export const authOptions: NextAuthOptions = {
 
         if (!res.ok) {
           if (res.status >= 500) throw new Error("ServiceUnavailable");
-          return null;
+          const errorBody = await res.json().catch(() => ({}));
+          throw new Error(errorBody.message ?? "Invalid email or password.");
         }
 
         const user = await res.json();
-        console.log("Backend Response", user);
         return {
           id: String(user.userId),
           email: credentials.email,
@@ -55,11 +55,6 @@ export const authOptions: NextAuthOptions = {
 
   session: {
     strategy: "jwt",
-  },
-
-  jwt: {
-    encode: (params) => encode({ ...params, secret: params.secret! }),
-    decode: (params) => decode({ ...params, secret: params.secret! }),
   },
 
   pages: {

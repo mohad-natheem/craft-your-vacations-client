@@ -10,10 +10,11 @@ import Button from "@/components/Button/Button";
 import { useProfile } from "@/hooks/useProfile";
 import { useUpdateProfile } from "@/hooks/useUpdateProfile";
 import { queryKeys } from "@/lib/queryKeys";
+import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 
 export default function ProfilePage() {
   const { update } = useSession();
-  const { data: profile } = useProfile();
+  const { data: profile, isLoading } = useProfile();
   const { mutate: updateProfile, isPending, error } = useUpdateProfile();
   const queryClient = useQueryClient();
 
@@ -22,6 +23,7 @@ export default function ProfilePage() {
   const [nationality, setNationality] = useState("");
   const [countryOfResidence, setCountryOfResidence] = useState("");
   const [profession, setProfession] = useState("");
+  const [mobile, setMobile] = useState("");
 
   // Initialise fields once profile data arrives
   useEffect(() => {
@@ -31,6 +33,7 @@ export default function ProfilePage() {
     setNationality(profile.nationality ?? "");
     setCountryOfResidence(profile.countryOfResidence ?? "");
     setProfession(profile.profession ?? "");
+    setMobile(profile.mobileNumber ?? "");
   }, [profile]);
 
   const initial = {
@@ -39,6 +42,7 @@ export default function ProfilePage() {
     nationality: profile?.nationality ?? "",
     countryOfResidence: profile?.countryOfResidence ?? "",
     profession: profile?.profession ?? "",
+    mobileNumber: profile?.mobileNumber ?? "",
   };
 
   const isDirty =
@@ -46,7 +50,8 @@ export default function ProfilePage() {
     dateOfBirth !== initial.dateOfBirth ||
     nationality !== initial.nationality ||
     countryOfResidence !== initial.countryOfResidence ||
-    profession !== initial.profession;
+    profession !== initial.profession ||
+    mobile != initial.mobileNumber;
 
   const handleSave = () => {
     updateProfile(
@@ -68,6 +73,10 @@ export default function ProfilePage() {
     .join("")
     .toUpperCase()
     .slice(0, 2);
+
+  if (isLoading) {
+    return <LoadingSpinner message="Fetching your profile" />;
+  }
 
   return (
     <div className="pt-24 pb-10 px-4 flex justify-center">
@@ -102,18 +111,20 @@ export default function ProfilePage() {
           />
 
           {/* Phone row */}
-          <div className="flex flex-col gap-1.5">
-            <span className="text-label-md text-text-muted">Phone</span>
-            <div className="flex items-center gap-2 px-4 py-3 rounded-xl bg-surface-highest border border-outline opacity-60">
-              <span className="text-body-md text-text-subtle flex-1">••••••••••</span>
-              {profile?.phoneVerified && (
-                <span className="flex items-center gap-1 text-label-sm text-primary">
-                  <BadgeCheck className="w-4 h-4" />
-                  Verified
-                </span>
-              )}
-            </div>
-          </div>
+          <FormField
+            id="mobile"
+            label="Mobile Number"
+            placeholder="+91 1234567890"
+            value={mobile}
+            disabled={true}
+            onChange={(e) => setMobile(e.target.value)}
+          />
+          {profile?.phoneVerified && (
+            <span className="flex items-center gap-1 text-label-sm text-primary">
+              <BadgeCheck className="w-4 h-4" />
+              Verified
+            </span>
+          )}
 
           <FormField
             id="dob"

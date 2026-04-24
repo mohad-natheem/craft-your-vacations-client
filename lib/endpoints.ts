@@ -9,6 +9,8 @@ import type {
   UpdateProfileRequest,
   SendOtpRequest,
   VerifyOtpRequest,
+  StartResetRequest,
+  ResetPasswordRequest,
 } from "@/app/types/api";
 
 export const destinationsApi = {
@@ -23,6 +25,10 @@ export const packagesApi = {
 
 export const authApi = {
   register: (body: RegisterRequest) => api.post<User>("auth/register", body),
+  startReset: (body: StartResetRequest) =>
+    api.post<OtpResponse>("auth/start-reset", body),
+  resetPassword: (body: ResetPasswordRequest) =>
+    api.post<OtpResponse>("auth/reset-password", body),
 };
 
 export const phoneApi = {

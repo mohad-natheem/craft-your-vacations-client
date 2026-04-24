@@ -45,6 +45,7 @@ export default function LoginPage() {
       ? "Our servers are temporarily unavailable. Please try again later."
       : "",
   );
+  const resetSuccess = searchParams.get("reset") === "success";
   const [loading, setLoading] = useState(false);
 
   const handleEmailSignIn = async (e: React.FormEvent) => {
@@ -61,7 +62,7 @@ export default function LoginPage() {
     setLoading(false);
 
     if (result?.error) {
-      setError("Invalid email or password.");
+      setError(result.error);
       return;
     }
 
@@ -88,6 +89,12 @@ export default function LoginPage() {
             Sign in to continue planning your next journey
           </p>
         </div>
+
+        {resetSuccess && (
+          <p className="text-body-sm text-green-500 text-center w-full">
+            Password reset successfully. You can now sign in.
+          </p>
+        )}
 
         {/* Tab switcher */}
         <div className="flex w-full bg-surface-highest rounded-2xl p-1 gap-1">
@@ -141,6 +148,12 @@ export default function LoginPage() {
             >
               {loading ? "Signing in…" : "Sign in"}
             </Button>
+            <Link
+              href="/reset-password"
+              className="text-body-sm text-text-muted hover:text-primary transition-colors text-center"
+            >
+              Forgot password?
+            </Link>
           </form>
         )}
 

@@ -71,6 +71,7 @@ export interface User {
   email: string;
   name: string;
   image?: string;
+  mobileNumber: string;
   phoneVerified: boolean;
   dateOfBirth?: string;
   nationality?: string;
@@ -100,6 +101,16 @@ export interface UpdateProfileRequest {
 
 export interface SendOtpRequest {
   mobileNumber: string;
+}
+
+export interface StartResetRequest {
+  identifier?: string;
+}
+
+export interface ResetPasswordRequest {
+  identifier: string;
+  otp: string;
+  newPassword: string;
 }
 
 export interface VerifyOtpRequest {
