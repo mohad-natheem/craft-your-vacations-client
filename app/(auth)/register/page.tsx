@@ -11,10 +11,13 @@ import Button from "@/components/Button/Button";
 import FormField from "@/components/FormField/FormField";
 import AuthCard from "@/components/AuthCard/AuthCard";
 import { useRegister } from "@/hooks/useRegister";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/queryKeys";
 
 export default function RegisterPage() {
   const router = useRouter();
   const { mutate: register, isPending, error } = useRegister();
+  const queryClient = useQueryClient();
   const [firstName, setFirstName] = useState("");
   const [lastName, setLastName] = useState("");
   const [email, setEmail] = useState("");
@@ -31,7 +34,8 @@ export default function RegisterPage() {
     register(
       { firstName, lastName, email, password },
       {
-        onSuccess: async () => {
+        onSuccess: async (registeredUser) => {
+          queryClient.setQueryData(queryKeys.profile.me(), registeredUser);
           const result = await signIn("credentials", {
             email,
             password,

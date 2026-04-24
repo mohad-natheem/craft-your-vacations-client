@@ -72,6 +72,10 @@ export interface User {
   name: string;
   image?: string;
   phoneVerified: boolean;
+  dateOfBirth?: string;
+  nationality?: string;
+  countryOfResidence?: string;
+  profession?: string;
 }
 
 export interface OtpResponse {
@@ -87,9 +91,11 @@ export interface RegisterRequest {
 }
 
 export interface UpdateProfileRequest {
+  name?: string;
   dateOfBirth?: string;
   nationality?: string;
-  designation?: string;
+  countryOfResidence?: string;
+  profession?: string;
 }
 
 export interface SendOtpRequest {

@@ -9,6 +9,8 @@ import LogoText from "@/public/logo_text.png";
 import Button from "@/components/Button/Button";
 import FormField from "@/components/FormField/FormField";
 import { useOnboardingStore } from "@/stores/useOnboardingStore";
+import { useQueryClient } from "@tanstack/react-query";
+import { queryKeys } from "@/lib/queryKeys";
 import AuthCard from "@/components/AuthCard/AuthCard";
 import { useSendOtp } from "@/hooks/useSendOtp";
 import { useVerifyOtp } from "@/hooks/useVerifyOtp";
@@ -217,16 +219,19 @@ function ProfileStep() {
   const router = useRouter();
 
   const { reset } = useOnboardingStore();
+  const queryClient = useQueryClient();
   const { mutate: updateProfile, isPending, error } = useUpdateProfile();
   const [dateOfBirth, setDateOfBirth] = useState("");
   const [nationality, setNationality] = useState("");
-  const [designation, setDesignation] = useState("");
+  const [countryOfResidence, setCountryOfResidence] = useState("");
+  const [profession, setProfession] = useState("");
 
   const handleComplete = () => {
     updateProfile(
-      { dateOfBirth, nationality, designation },
+      { dateOfBirth, nationality, countryOfResidence, profession },
       {
-        onSuccess: () => {
+        onSuccess: (updatedUser) => {
+          queryClient.setQueryData(queryKeys.profile.me(), updatedUser);
           router.replace("/");
           reset();
         },
@@ -264,11 +269,18 @@ function ProfileStep() {
           onChange={(e) => setNationality(e.target.value)}
         />
         <FormField
-          id="designation"
-          label="Designation"
+          id="countryOfResidence"
+          label="Country of residence"
+          placeholder="e.g. India"
+          value={countryOfResidence}
+          onChange={(e) => setCountryOfResidence(e.target.value)}
+        />
+        <FormField
+          id="profession"
+          label="Profession"
           placeholder="e.g. Software Engineer"
-          value={designation}
-          onChange={(e) => setDesignation(e.target.value)}
+          value={profession}
+          onChange={(e) => setProfession(e.target.value)}
         />
       </div>
 

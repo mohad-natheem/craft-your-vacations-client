@@ -33,6 +33,7 @@ export const phoneApi = {
 };
 
 export const usersApi = {
+  getProfile: () => api.get<User>("users/profile"),
   updateProfile: (body: UpdateProfileRequest) =>
     api.patch<User>("users/profile", body),
 };

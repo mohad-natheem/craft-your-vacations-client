@@ -11,7 +11,7 @@ import ToggleTheme from "@/components/ToggleTheme/ToggleTheme";
 import Link from "next/link";
 import Button from "../Button/Button";
 import { useUIStore } from "@/stores/useUIStore";
-import { signOut, useSession } from "next-auth/react";
+import { useSession } from "next-auth/react";
 
 interface NavbarProps {
   logo?: React.ReactNode;
@@ -86,9 +86,13 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
           </button>
           <ToggleTheme />
           {isUserLogged ? (
-            <Button variant="error" onClick={() => signOut()}>
-              Logout
-            </Button>
+            <Link
+              href="/profile"
+              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
+              aria-label="Profile"
+            >
+              <CircleUser className="w-5 h-5" />
+            </Link>
           ) : (
             <Button href="/login">Login</Button>
           )}
@@ -121,6 +125,14 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
               {link.label}
             </Link>
           ))}
+          {isUserLogged && (
+            <Link
+              href="/profile"
+              className="px-4 py-3 rounded-lg text-body-md transition-colors text-text-muted hover:text-text hover:bg-surface-high"
+            >
+              Profile
+            </Link>
+          )}
         </div>
       )}
     </nav>

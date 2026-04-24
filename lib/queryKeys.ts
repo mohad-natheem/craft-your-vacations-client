@@ -6,5 +6,8 @@ export const queryKeys = {
   packages: {
     detail: (slug: string, key: string) => ['packages', 'detail', slug, key] as const,
   },
+  profile: {
+    me: () => ['profile', 'me'] as const,
+  },
 } as const;
  

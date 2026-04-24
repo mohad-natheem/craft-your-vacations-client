@@ -4,7 +4,7 @@ import { redirect, usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
-const PROTECTED_PATHS = ["/destinations", "/packages"];
+const PROTECTED_PATHS = ["/destinations", "/packages", "/profile"];
 
 export function RootGuard({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
@@ -27,7 +27,7 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
     }
   }, [session, status, pathname, router, isProtected]);
 
-  if (status === "loading") return <LoadingSpinner />;
+if (status === "loading") return <LoadingSpinner />;
   if (isProtected && !session) return null;
   if (session && session.user.phoneVerified === false) return null;
 

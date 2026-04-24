@@ -1,8 +1,6 @@
 import { getServerSession } from "next-auth/next";
-import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 import { authOptions } from "@/lib/auth";
-import { url } from "inspector";
 
 const BACKEND_URL = "http://localhost:5025";
 
@@ -52,9 +50,9 @@ export async function bffFetch<T>(
     ...headers,
   };
 
-  if (session?.user) {
-    const token = await getToken({ req, secret: process.env.NEXTAUTH_SECRET });
-    if (token) fetchHeaders["Authorization"] = `Bearer ${token}`;
+  if (session?.user?.userId) {
+    console.log(`Setting User id in header: ${session.user.userId}`);
+    fetchHeaders["X-User-Id"] = session.user.userId;
   }
 
   // 3. Build fetch options (supports both Next.js revalidate and standard cache)
@@ -75,8 +73,8 @@ export async function bffFetch<T>(
 
   try {
     backendResponse = await fetch(`${BACKEND_URL}${path}`, fetchOptions);
-  } catch {
-    console.log(`BFF fetch failed ${url}`);
+  } catch (e) {
+    console.log(`BFF fetch failed ${path} ${e}`);
     return {
       ok: false,
       response: NextResponse.json(

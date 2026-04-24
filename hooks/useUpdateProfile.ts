@@ -6,9 +6,11 @@ import { usersApi } from "@/lib/endpoints";
 export function useUpdateProfile() {
   return useMutation({
     mutationFn: (body: {
+      name?: string;
       dateOfBirth?: string;
       nationality?: string;
-      designation?: string;
+      countryOfResidence?: string;
+      profession?: string;
     }) => usersApi.updateProfile(body),
   });
 }

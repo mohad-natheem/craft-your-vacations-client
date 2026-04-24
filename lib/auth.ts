@@ -1,6 +1,7 @@
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from "next-auth";
+import { encode, decode } from "next-auth/jwt";
 
 const BACKEND_URL = "http://localhost:5025";
 
@@ -56,6 +57,11 @@ export const authOptions: NextAuthOptions = {
     strategy: "jwt",
   },
 
+  jwt: {
+    encode: (params) => encode({ ...params, secret: params.secret! }),
+    decode: (params) => decode({ ...params, secret: params.secret! }),
+  },
+
   pages: {
     signIn: "/login",
   },
@@ -83,7 +89,6 @@ export const authOptions: NextAuthOptions = {
             return "/login?error=ServiceUnavailable";
           }
           const backendUser = await res.json();
-          console.log("Backend User", backendUser);
           user.id = String(backendUser.userId);
           (user as { phoneVerified?: boolean }).phoneVerified =
             backendUser.phoneVerified ?? false;
@@ -101,7 +106,6 @@ export const authOptions: NextAuthOptions = {
         return { ...token, ...session };
       }
       if (user) {
-        console.log("Before Token User Id", user.id);
         token.userId = user.id;
         token.phoneVerified =
           (user as { phoneVerified?: boolean }).phoneVerified ?? false;
@@ -110,11 +114,8 @@ export const authOptions: NextAuthOptions = {
     },
 
     async session({ session, token }) {
-      console.log("Token User Id", token.userId);
-
       session.user.userId = token.userId as string;
       session.user.phoneVerified = (token.phoneVerified as boolean) ?? false;
-      console.log("Session  User Id", session.user.userId);
       return session;
     },
   },
