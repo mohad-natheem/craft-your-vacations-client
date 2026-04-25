@@ -38,7 +38,7 @@ export default function PageHero({
 }: PageHeroProps) {
   return (
     <div
-      className={`relative w-full shadow-lg shadow-primary/20 h-(--hero-height) min-h-130 overflow-hidden rounded-3xl mx-auto max-w-7xl px-6 ${className}`}
+      className={`relative w-full shadow-lg shadow-primary/20 h-(--hero-height) min-h-130 overflow-hidden mx-auto px-6 ${className}`}
     >
       {/* Background image or fallback */}
       {imagePath ? (
@@ -46,30 +46,31 @@ export default function PageHero({
           src={imagePath}
           alt={imageAlt}
           fill
-          className="object-cover rounded-3xl"
+          className="object-cover"
           priority
         />
       ) : (
-        <div className="absolute inset-0 rounded-3xl bg-surface-high" />
+        <div className="absolute inset-0 bg-surface-high" />
       )}
 
       {/* Layered gradients for depth */}
-      <div className="absolute inset-0 rounded-3xl bg-linear-to-t from-overlay/90 via-overlay/50 to-overlay/10" />
-      <div className="absolute inset-0 rounded-3xl bg-linear-to-r from-overlay/55 via-transparent to-transparent" />
+      <div className="absolute inset-0 bg-linear-to-t from-overlay/90 via-overlay/50 to-overlay/10" />
+      <div className="absolute inset-0  bg-linear-to-r from-overlay/55 via-transparent to-transparent" />
 
       {/* Back button */}
       <button
-        type="button"
-        onClick={onBack}
-        className="absolute top-6 left-6 flex items-center gap-1.5 text-on-overlay/70 hover:text-on-overlay text-label-sm transition-colors cursor-pointer"
-      >
-        <ChevronLeft className="w-4 h-4" />
-        {backLabel}
-      </button>
+          type="button"
+          onClick={onBack}
+          className="absolute top-6 left-0 right-0 mx-auto max-w-7xl px-6 flex items-center gap-1.5 text-on-overlay/70 hover:text-on-overlay text-label-sm transition-colors cursor-pointer"
+        >
+          <ChevronLeft className="w-4 h-4" />
+          {backLabel}
+        </button>
 
       {/* Bottom content */}
-      <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
+      <div className="absolute bottom-0 left-0 right-0 py-8 px-6 flex flex-col max-w-7xl mx-auto">
         {/* Location tag pills */}
+        
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mb-5">
             {tags.map((tag) => (
@@ -85,7 +86,7 @@ export default function PageHero({
         )}
 
         {/* Title */}
-        <h1 className="text-display-xl md:text-display-xxl text-on-overlay leading-hero mb-4">
+        <h1 className="text-display-sm md:text-display-xl text-on-overlay leading-hero mb-4">
           {title}
         </h1>
 

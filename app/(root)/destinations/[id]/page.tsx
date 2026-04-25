@@ -1,6 +1,6 @@
 "use client";
 
-import { use } from "react";
+import { use, useState, useEffect } from "react";
 import Image from "next/image";
 import { Package, Clock, ScrollText, Quote, MapPin } from "lucide-react";
 import { useDestination } from "@/hooks/useDestination";
@@ -10,12 +10,12 @@ import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import ErrorState from "@/components/ErrorState/ErrorState";
 import Section from "@/components/Section/Sections";
 import PackageCard from "@/components/PackageCard/PackageCard";
+import DestinationCard from "@/components/DestinationCard/DestinationCard";
 import DestinationLandscapeCard from "@/components/DestinationLandscapeCard/DestinationLandscapeCard";
 import ReviewCard from "@/components/ReviewCard/ReviewCard";
 import AutoSlider from "@/components/AutoSlider/AutoSlider";
 import PageHero from "@/components/PageHero/PageHero";
 import CtaBanner from "@/components/CtaBanner/CtaBanner";
-import FallbackBg from "@/public/introImage4.jpg";
 import { useRouter } from "next/navigation";
 
 export default function DestinationDetailPage({
@@ -28,6 +28,20 @@ export default function DestinationDetailPage({
   const { data: allDestinations } = useDestinations();
   const { data: reviews = [] } = useDestinationReviews(id);
   const router = useRouter();
+
+  const [reviewSliderCount, setReviewSliderCount] = useState(1);
+  const [memoriesSliderCount, setMemoriesSliderCount] = useState(1);
+
+  useEffect(() => {
+    const update = () => {
+      const w = window.innerWidth;
+      setReviewSliderCount(reviews.length === 1 ? 1 : w >= 1024 ? 3 : w >= 640 ? 2 : 1);
+      setMemoriesSliderCount(w >= 1024 ? 4 : w >= 640 ? 2 : 1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [reviews.length]);
 
   if (isLoading) {
     return (
@@ -173,7 +187,7 @@ export default function DestinationDetailPage({
             </p>
           </div>
           <AutoSlider
-            visibleCount={reviews.length === 1 ? 1 : 3}
+            visibleCount={reviewSliderCount}
             intervalMs={4000}
           >
             {reviews.map((review) => (
@@ -198,7 +212,7 @@ export default function DestinationDetailPage({
               </p>
             </div>
             <AutoSlider
-              visibleCount={memories.length === 1 ? 1 : 4}
+              visibleCount={memoriesSliderCount}
               intervalMs={3000}
             >
               {memories.map((src, i) => (
@@ -230,7 +244,22 @@ export default function DestinationDetailPage({
               Continue your journey somewhere new
             </p>
           </div>
-          <div className="flex flex-col gap-5">
+          {/* Mobile: portrait cards, 1 column */}
+          <div className="lg:hidden grid grid-cols-1 gap-4">
+            {popularDestinations.map((destination) => (
+              <DestinationCard
+                key={destination.id}
+                href={`/destinations/${destination.slug}`}
+                imagePath={destination.imagePath}
+                title={destination.title}
+                destinationCities={destination.destinationCities}
+                content={destination.content}
+              />
+            ))}
+          </div>
+
+          {/* Desktop: landscape cards */}
+          <div className="hidden lg:flex flex-col gap-5">
             {popularDestinations.map((destination, index) => (
               <DestinationLandscapeCard
                 key={destination.id}

@@ -1,4 +1,5 @@
 "use client";
+import DestinationCard from "@/components/DestinationCard/DestinationCard";
 import DestinationLandscapeCard from "@/components/DestinationLandscapeCard/DestinationLandscapeCard";
 import ErrorState from "@/components/ErrorState/ErrorState";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
@@ -33,22 +34,36 @@ export function DestinationsScreen() {
   return (
     <div>
       <Section id="destinations" title="">
-        <div className="z-10 flex flex-row items-center justify-between">
+        <div className="z-10 flex flex-col gap-6 lg:flex-row lg:items-center lg:justify-between">
           <div className="flex flex-col items-center">
-            <h1 className="text-display-xl md:text-display-xxl text-text tracking-tighter leading-[0.9]">
+            <h1 className="text-display-lg md:text-display-xl lg:text-display-xxl text-text tracking-tighter leading-[0.9]">
               The Curated
             </h1>
-            <span className="text-display-xl md:text-display-xxl tracking-tighter leading-[0.9] mb-8 text-stroke-primary italic">
+            <span className="text-display-lg md:text-display-xl lg:text-display-xxl tracking-tighter leading-[0.9] mb-4 lg:mb-8 text-stroke-primary italic">
               Horizon
             </span>
           </div>
-          <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-10 leading-relaxed font-light">
+          <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-0 lg:mb-10 leading-relaxed font-light">
             Discover hand-picked journeys that bridge the gap between luxury and
             raw exploration. Your next story begins here.
           </p>
-          <div className="flex flex-wrap gap-4"></div>
         </div>
-        <div className="flex flex-col gap-5">
+        {/* Mobile: portrait grid */}
+        <div className="lg:hidden grid grid-cols-1 gap-4 mt-6">
+          {data.map((destination) => (
+            <DestinationCard
+              key={destination.id}
+              href={`/destinations/${destination.slug}`}
+              imagePath={destination.imagePath}
+              title={destination.title}
+              destinationCities={destination.destinationCities}
+              content={destination.content}
+            />
+          ))}
+        </div>
+
+        {/* Desktop: landscape cards with waypoints */}
+        <div className="hidden lg:flex flex-col gap-5">
           {data.map((destination, index) => {
             const cardLeft = index % 2 !== 0;
 
