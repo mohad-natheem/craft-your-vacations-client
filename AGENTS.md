@@ -21,6 +21,10 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Before creating a new component, check the `components/` folder for an existing one that can be reused or extended.
 - When building new components, make them reusable and place them in the `components/` folder.
 
+## Page vs Component responsibilities
+- **Modals belong to the page, not to child components.** Never render a modal (or control its open/close state) inside a card, list item, or other reusable component. The page owns the modal's `isOpen` state, the handler that opens it, and the rendered `<Modal />` element.
+- **Queries and mutations belong to the page.** Never call `useQuery` or `useMutation` hooks inside cards, modals, or other child components. Call them in the page component and pass data/callbacks down as props. Modals and cards are pure UI — they receive what they need via props and fire callbacks.
+
 ---
 
 # Project Architecture

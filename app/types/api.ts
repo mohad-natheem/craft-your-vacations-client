@@ -118,7 +118,7 @@ export interface VerifyOtpRequest {
   otp: string;
 }
 
-export type BookingStatus = "pending" | "confirmed" | "cancelled";
+export type BookingStatus = "pending" | "confirmed" | "completed" | "cancelled";
 
 export interface CreateBookingRequest {
   packageId: number;
@@ -139,4 +139,25 @@ export interface Booking {
   notes?: string;
   status: BookingStatus;
   createdAt: string;
+  hasReview?: boolean;
+}
+
+export interface Review {
+  id: number;
+  bookingId: number;
+  destinationSlug: string;
+  packageTitle: string;
+  preferredMonth: string;
+  rating: number;
+  quote: string;
+  imagePaths: string[];
+  authorName: string;
+  authorProfession?: string;
+  createdAt: string;
+}
+
+export interface CreateReviewRequest {
+  bookingId: number;
+  rating: number;
+  quote: string;
 }

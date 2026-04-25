@@ -39,7 +39,7 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
 
   return (
     <nav
-      className={`fixed top-0 inset-x-0 z-50 glass border-b border-outline ${className}`}
+      className={`fixed top-0 inset-x-0 z-50 glass border-b border-outline shadow-sm shadow-primary/10 ${className}`}
     >
       <div className="mx-auto px-10 h-16 flex items-center justify-around">
         {/* Logo */}

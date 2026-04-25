@@ -301,6 +301,19 @@
     box-shadow: 0 8px 48px 0 rgba(11, 19, 38, 0.08);
   }
 
+  /* Modal panel — white card in light theme, glass in dark theme */
+  .modal-panel {
+    background: #ffffff;
+    border: 1px solid rgba(0, 0, 0, 0.08);
+  }
+
+  [data-theme="dark"] .modal-panel {
+    background: var(--glass-bg);
+    backdrop-filter: blur(var(--glass-blur));
+    -webkit-backdrop-filter: blur(var(--glass-blur));
+    border: 1px solid var(--color-outline);
+  }
+
   /* Section spacing rhythm */
   .section-gap {
     padding-block: var(--section-gap);

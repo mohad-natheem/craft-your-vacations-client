@@ -15,6 +15,12 @@ interface BffFetchOptions {
   method?: "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
   /** Request body — will be JSON-serialised. */
   body?: unknown;
+  /**
+   * Raw body (e.g. FormData for file uploads). When set, Content-Type is NOT
+   * forced to application/json and the body is forwarded as-is so the fetch
+   * API can set the correct multipart boundary automatically.
+   */
+  rawBody?: FormData | Blob;
 }
 
 type BffResult<T> =
@@ -32,6 +38,7 @@ export async function bffFetch<T>(
     headers = {},
     method = "GET",
     body,
+    rawBody,
   } = options;
 
   // 1. Auth check
@@ -45,10 +52,11 @@ export async function bffFetch<T>(
   }
 
   // 2. Build headers
-  const fetchHeaders: Record<string, string> = {
-    "Content-Type": "application/json",
-    ...headers,
-  };
+  // rawBody (e.g. FormData) must not have Content-Type set manually — the
+  // fetch API derives the correct multipart boundary automatically.
+  const fetchHeaders: Record<string, string> = rawBody
+    ? { ...headers }
+    : { "Content-Type": "application/json", ...headers };
 
   if (session?.user?.userId) {
     console.log(`Setting User id in header: ${session.user.userId}`);
@@ -65,7 +73,7 @@ export async function bffFetch<T>(
     method,
     headers: fetchHeaders,
     ...cacheConfig,
-    ...(body !== undefined && { body: JSON.stringify(body) }),
+    ...(rawBody !== undefined ? { body: rawBody } : body !== undefined ? { body: JSON.stringify(body) } : {}),
   };
 
   // 4. Call .NET backend

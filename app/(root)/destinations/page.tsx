@@ -3,8 +3,10 @@ import DestinationLandscapeCard from "@/components/DestinationLandscapeCard/Dest
 import ErrorState from "@/components/ErrorState/ErrorState";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import Section from "@/components/Section/Sections";
+import CtaBanner from "@/components/CtaBanner/CtaBanner";
 import { useDestinations } from "@/hooks/useDestinations";
 import { MapPin } from "lucide-react";
+import BannerBg from "@/public/introImage3.jpg";
 
 export function DestinationsScreen() {
   const { data, isLoading, isError, error, refetch } = useDestinations();
@@ -105,6 +107,11 @@ export function DestinationsScreen() {
           })}
         </div>
       </Section>
+
+      <CtaBanner
+        heading="Your Dream Destination Awaits!"
+        subtext="Let us help you plan every detail of your perfect getaway."
+      />
     </div>
   );
 }

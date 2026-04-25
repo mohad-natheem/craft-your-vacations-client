@@ -6,15 +6,21 @@ import {
   Compass,
   PenLine,
   Plane,
+  Quote,
 } from "lucide-react";
 import Image from "next/image";
 import IntroIcon1 from "@/public/introImage1.jpg";
 import IntroIcon5 from "@/public/introImage5.jpg";
+import CtaBanner from "@/components/CtaBanner/CtaBanner";
 import DestinationCard from "@/components/DestinationCard/DestinationCard";
+import ReviewCard from "@/components/ReviewCard/ReviewCard";
+import AutoSlider from "@/components/AutoSlider/AutoSlider";
 import { useDestinations } from "@/hooks/useDestinations";
+import { useApprovedReviews } from "@/hooks/useApprovedReviews";
 
 export default function HomePage() {
   const { data, isLoading } = useDestinations();
+  const { data: reviews = [] } = useApprovedReviews();
 
   if (isLoading) {
     return <Loader />;
@@ -181,6 +187,40 @@ export default function HomePage() {
           </div>
         )}
       </section>
+
+      {/*Voices of Our Travellers*/}
+      {reviews.length > 0 && (
+        <section id="testimonials" className="mt-16 border-t border-outline">
+          <div className="mx-auto max-w-7xl px-6 mt-16">
+            <div className="flex flex-row items-center justify-between mb-12">
+              <div className="flex flex-col gap-3">
+                <div className="flex items-center gap-2">
+                  <Quote className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                  <span className="text-headline-lg text-text">
+                    Voices of Our Travellers
+                  </span>
+                </div>
+                <span className="text-text-muted max-w-md">
+                  Stories from people who crafted their journey with us.
+                </span>
+              </div>
+            </div>
+            <AutoSlider
+              visibleCount={reviews.length === 1 ? 1 : 3}
+              intervalMs={4500}
+            >
+              {reviews.slice(0, 6).map((review) => (
+                <ReviewCard key={review.id} {...review} />
+              ))}
+            </AutoSlider>
+          </div>
+        </section>
+      )}
+
+      <CtaBanner
+        heading="Plan an Unforgettable Experience Today!"
+        subtext="We can help you fit your stay and experience within your allotted budget."
+      />
     </div>
   );
 }

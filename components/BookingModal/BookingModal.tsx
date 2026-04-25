@@ -1,20 +1,26 @@
 "use client";
 
 import { useState, useEffect } from "react";
-import { X, CheckCircle2 } from "lucide-react";
-import { useCreateBooking } from "@/hooks/useCreateBooking";
+import { X } from "lucide-react";
 import FormField from "@/components/FormField/FormField";
 import SelectField from "@/components/SelectField/SelectField";
 import TextAreaField from "@/components/TextAreaField/TextAreaField";
 import Button from "@/components/Button/Button";
 import type { SelectOption } from "@/app/types/component";
 
+export interface BookingSubmitData {
+  travelersCount: number;
+  preferredMonth: string;
+  notes?: string;
+}
+
 interface BookingModalProps {
   isOpen: boolean;
   onClose: () => void;
-  packageId: number;
   packageTitle: string;
-  destinationSlug: string;
+  isPending: boolean;
+  error: Error | null;
+  onSubmit: (data: BookingSubmitData) => void;
 }
 
 const MONTH_NAMES = [
@@ -35,16 +41,14 @@ function getMonthOptions(): SelectOption[] {
 export function BookingModal({
   isOpen,
   onClose,
-  packageId,
   packageTitle,
-  destinationSlug,
+  isPending,
+  error,
+  onSubmit,
 }: BookingModalProps) {
   const [travelersCount, setTravelersCount] = useState("");
   const [preferredMonth, setPreferredMonth] = useState("");
   const [notes, setNotes] = useState("");
-  const [submitted, setSubmitted] = useState(false);
-
-  const { mutate, isPending, error } = useCreateBooking();
 
   // Close on Escape key
   useEffect(() => {
@@ -56,14 +60,13 @@ export function BookingModal({
     return () => document.removeEventListener("keydown", handleKey);
   }, [isOpen, onClose]);
 
-  // Reset state after modal closes
+  // Reset form when modal closes
   useEffect(() => {
     if (!isOpen) {
       const t = setTimeout(() => {
         setTravelersCount("");
         setPreferredMonth("");
         setNotes("");
-        setSubmitted(false);
       }, 200);
       return () => clearTimeout(t);
     }
@@ -75,20 +78,11 @@ export function BookingModal({
     e.preventDefault();
     const count = parseInt(travelersCount, 10);
     if (isNaN(count) || count < 1) return;
-
-    mutate(
-      {
-        packageId,
-        packageTitle,
-        destinationSlug,
-        travelersCount: count,
-        preferredMonth,
-        notes: notes.trim() || undefined,
-      },
-      {
-        onSuccess: () => setSubmitted(true),
-      }
-    );
+    onSubmit({
+      travelersCount: count,
+      preferredMonth,
+      notes: notes.trim() || undefined,
+    });
   }
 
   return (
@@ -106,7 +100,7 @@ export function BookingModal({
       />
 
       {/* Panel */}
-      <div className="relative z-10 w-full max-w-lg glass ghost-border shadow-lg shadow-primary/20 rounded-3xl p-8 flex flex-col gap-6">
+      <div className="relative z-10 w-full max-w-lg modal-panel shadow-lg shadow-primary/20 rounded-3xl p-8 flex flex-col gap-6">
         {/* Close button */}
         <button
           type="button"
@@ -117,78 +111,58 @@ export function BookingModal({
           <X className="w-4 h-4" />
         </button>
 
-        {submitted ? (
-          /* ── Success state ── */
-          <div className="flex flex-col items-center gap-4 py-4 text-center">
-            <CheckCircle2 className="w-12 h-12 text-primary" strokeWidth={1.5} />
-            <div>
-              <h2 className="text-headline-md text-text">Request received!</h2>
-              <p className="text-body-md text-text-muted mt-2 max-w-sm">
-                Our team will get in touch within 48 hours to tailor this trip
-                to your needs.
-              </p>
-            </div>
-            <Button variant="primary" onClick={onClose} className="mt-2">
-              Done
-            </Button>
+          <div>
+            <h2 className="text-headline-md text-text">{packageTitle}</h2>
+            <p className="text-body-md text-text-muted mt-2">
+              Share your interest and our team will reach out to plan your
+              perfect trip.
+            </p>
           </div>
-        ) : (
-          /* ── Form state ── */
-          <>
-            <div>
-              <h2 className="text-headline-md text-text">{packageTitle}</h2>
-              <p className="text-body-md text-text-muted mt-2">
-                Share your interest and our team will reach out to plan your
-                perfect trip.
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            <FormField
+              id="travelers"
+              label="Number of travelers"
+              type="number"
+              required
+              placeholder="e.g. 2"
+              value={travelersCount}
+              onChange={(e) => setTravelersCount(e.target.value)}
+            />
+            <SelectField
+              id="preferredMonth"
+              label="Preferred travel month"
+              required
+              placeholder="Select a month"
+              options={getMonthOptions()}
+              value={preferredMonth}
+              onChange={(e) => setPreferredMonth(e.target.value)}
+            />
+            <TextAreaField
+              id="notes"
+              label="Additional notes"
+              placeholder="Any special requests, dietary needs, anniversary celebrations…"
+              rows={3}
+              maxLength={500}
+              value={notes}
+              onChange={(e) => setNotes(e.target.value)}
+            />
+
+            {error && (
+              <p className="text-body-sm text-red-400">
+                {error.message || "Something went wrong. Please try again."}
               </p>
-            </div>
+            )}
 
-            <form onSubmit={handleSubmit} className="flex flex-col gap-5">
-              <FormField
-                id="travelers"
-                label="Number of travelers"
-                type="number"
-                required
-                placeholder="e.g. 2"
-                value={travelersCount}
-                onChange={(e) => setTravelersCount(e.target.value)}
-              />
-              <SelectField
-                id="preferredMonth"
-                label="Preferred travel month"
-                required
-                placeholder="Select a month"
-                options={getMonthOptions()}
-                value={preferredMonth}
-                onChange={(e) => setPreferredMonth(e.target.value)}
-              />
-              <TextAreaField
-                id="notes"
-                label="Additional notes"
-                placeholder="Any special requests, dietary needs, anniversary celebrations…"
-                rows={3}
-                maxLength={500}
-                value={notes}
-                onChange={(e) => setNotes(e.target.value)}
-              />
-
-              {error && (
-                <p className="text-body-sm text-red-400">
-                  {error instanceof Error ? error.message : "Something went wrong. Please try again."}
-                </p>
-              )}
-
-              <Button
-                type="submit"
-                variant="primary"
-                disabled={isPending}
-                className="w-full justify-center mt-2"
-              >
-                {isPending ? "Submitting…" : "Express Interest"}
-              </Button>
-            </form>
-          </>
-        )}
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isPending}
+              className="w-full justify-center mt-2"
+            >
+              {isPending ? "Submitting…" : "Express Interest"}
+            </Button>
+          </form>
       </div>
     </div>
   );

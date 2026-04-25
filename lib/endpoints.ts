@@ -13,6 +13,8 @@ import type {
   ResetPasswordRequest,
   Booking,
   CreateBookingRequest,
+  Review,
+  CreateReviewRequest,
 } from "@/app/types/api";
 
 export const destinationsApi = {
@@ -49,4 +51,13 @@ export const usersApi = {
 export const bookingsApi = {
   create: (body: CreateBookingRequest) => api.post<Booking>("bookings", body),
   getMyBookings: () => api.get<Booking[]>("bookings"),
+};
+
+export const reviewsApi = {
+  create: (body: CreateReviewRequest) => api.post<Review>("reviews", body),
+  uploadImages: (id: number, formData: FormData) =>
+    api.post<Review>(`reviews/${id}/images`, formData),
+  getByDestination: (slug: string) =>
+    api.get<Review[]>(`reviews/destination/${slug}`),
+  getApproved: () => api.get<Review[]>("reviews/approved"),
 };

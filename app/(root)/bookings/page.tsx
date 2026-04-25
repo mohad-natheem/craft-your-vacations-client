@@ -1,14 +1,59 @@
 "use client";
 
+import { useState } from "react";
 import { useMyBookings } from "@/hooks/useMyBookings";
+import { useSubmitReview } from "@/hooks/useSubmitReview";
+import { reviewsApi } from "@/lib/endpoints";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import ErrorState from "@/components/ErrorState/ErrorState";
 import Button from "@/components/Button/Button";
 import BookingCard from "@/components/BookingCard/BookingCard";
+import ReviewModal from "@/components/ReviewModal/ReviewModal";
+import ModalSuccess from "@/components/ModalSuccess/ModalSuccess";
 import { CalendarDays } from "lucide-react";
+import type { Booking } from "@/app/types/api";
+import type { ReviewSubmitData } from "@/components/ReviewModal/ReviewModal";
 
 export default function BookingsPage() {
   const { data: bookings, isLoading, isError, error, refetch } = useMyBookings();
+
+  const [reviewingBooking, setReviewingBooking] = useState<Booking | null>(null);
+  const [reviewSuccessOpen, setReviewSuccessOpen] = useState(false);
+
+  const { mutate, isPending, error: reviewError } = useSubmitReview(
+    reviewingBooking?.destinationSlug ?? ""
+  );
+
+  function handleOpenReview(booking: Booking) {
+    setReviewingBooking(booking);
+  }
+
+  function handleCloseReview() {
+    setReviewingBooking(null);
+  }
+
+  async function handleReviewSubmit({ rating, quote, files }: ReviewSubmitData) {
+    if (!reviewingBooking) return;
+
+    mutate(
+      { bookingId: reviewingBooking.id, rating, quote },
+      {
+        onSuccess: async (review) => {
+          if (files.length > 0) {
+            const formData = new FormData();
+            files.forEach((f) => formData.append("files", f));
+            try {
+              await reviewsApi.uploadImages(review.id, formData);
+            } catch {
+              // Images failed but review was saved — show success anyway
+            }
+          }
+          setReviewingBooking(null);
+          setReviewSuccessOpen(true);
+        },
+      }
+    );
+  }
 
   if (isLoading) {
     return <LoadingSpinner message="Loading your travel interests…" fullScreen={false} />;
@@ -53,9 +98,29 @@ export default function BookingsPage() {
       {/* Booking list */}
       <div className="flex flex-col gap-4">
         {bookings?.map((booking) => (
-          <BookingCard key={booking.id} booking={booking} />
+          <BookingCard
+            key={booking.id}
+            booking={booking}
+            onReviewClick={() => handleOpenReview(booking)}
+          />
         ))}
       </div>
+
+      <ReviewModal
+        isOpen={reviewingBooking !== null}
+        onClose={handleCloseReview}
+        packageTitle={reviewingBooking?.packageTitle ?? ""}
+        isPending={isPending}
+        error={reviewError instanceof Error ? reviewError : null}
+        onSubmit={handleReviewSubmit}
+      />
+
+      <ModalSuccess
+        isOpen={reviewSuccessOpen}
+        title="Thank you for sharing!"
+        message="Your review is pending approval and will appear shortly."
+        onClose={() => setReviewSuccessOpen(false)}
+      />
     </div>
   );
 }

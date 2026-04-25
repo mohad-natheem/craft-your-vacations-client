@@ -1,7 +1,5 @@
 import Link from "next/link";
-
-const WHATSAPP_NUMBER = "919787812074"; // Replace with your number e.g. "919876543210"
-const WHATSAPP_URL = `https://wa.me/${WHATSAPP_NUMBER}`;
+import { WHATSAPP_URL } from "@/lib/contact";
 
 export function WhatsAppFAB() {
   return (

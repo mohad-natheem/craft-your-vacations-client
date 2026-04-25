@@ -1,24 +1,28 @@
 "use client";
 
 import { use, useState } from "react";
-import Image from "next/image";
 import {
-  ChevronLeft,
   Clock,
-  MapPin,
   ScrollText,
   Calendar,
   Zap,
+  MapPin,
 } from "lucide-react";
+import PageHero from "@/components/PageHero/PageHero";
 import { useRouter } from "next/navigation";
 import { usePackageDetail } from "@/hooks/usePackageDetail";
 import { useDestination } from "@/hooks/useDestination";
+import { useCreateBooking } from "@/hooks/useCreateBooking";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import ErrorState from "@/components/ErrorState/ErrorState";
 import Section from "@/components/Section/Sections";
 import PackageCard from "@/components/PackageCard/PackageCard";
 import ItineraryDay from "@/components/ItineraryDay/ItineraryDay";
 import BookingModal from "@/components/BookingModal/BookingModal";
+import type { BookingSubmitData } from "@/components/BookingModal/BookingModal";
+import ModalSuccess from "@/components/ModalSuccess/ModalSuccess";
+import CtaBanner from "@/components/CtaBanner/CtaBanner";
+import FallbackBg from "@/public/introImage4.jpg";
 
 export default function PackageDetailPage({
   params,
@@ -28,6 +32,25 @@ export default function PackageDetailPage({
   const { id, key } = use(params);
   const router = useRouter();
   const [bookingOpen, setBookingOpen] = useState(false);
+  const [bookingSuccessOpen, setBookingSuccessOpen] = useState(false);
+  const { mutate: createBooking, isPending: bookingPending, error: bookingError } = useCreateBooking();
+
+  function handleBookingSubmit(data: BookingSubmitData) {
+    if (!pkg) return;
+    createBooking(
+      {
+        packageId: pkg.id,
+        packageTitle: pkg.title,
+        destinationSlug: id,
+        ...data,
+      },
+      { onSuccess: () => { setBookingOpen(false); setBookingSuccessOpen(true); } }
+    );
+  }
+
+  function handleBookingClose() {
+    setBookingOpen(false);
+  }
 
   const {
     data: pkg,
@@ -67,76 +90,19 @@ export default function PackageDetailPage({
   return (
     <div className="section-gap">
       {/* ─── Hero ─── */}
-      <div className="relative w-full h-(--hero-height-compact) min-h-120 overflow-hidden rounded-3xl mx-auto max-w-7xl px-6">
-        {destination?.imagePath ? (
-          <Image
-            src={destination.imagePath}
-            alt={destination.title}
-            fill
-            className="object-cover rounded-3xl"
-            priority
-          />
-        ) : (
-          <div className="absolute inset-0 rounded-3xl bg-surface-high" />
-        )}
-
-        {/* Gradient overlays */}
-        <div className="absolute inset-0 rounded-3xl bg-linear-to-t from-overlay/95 via-overlay/50 to-overlay/10" />
-        <div className="absolute inset-0 rounded-3xl bg-linear-to-r from-overlay/60 via-transparent to-transparent" />
-
-        {/* Back button */}
-        <button
-          type="button"
-          onClick={() => router.back()}
-          className="absolute top-6 left-6 flex items-center gap-1.5 text-on-overlay/70 hover:text-on-overlay text-label-sm transition-colors"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          {destination?.title ?? "Back"}
-        </button>
-
-        {/* Bottom overlay content */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
-          {/* Destination tag */}
-          {destination && (
-            <div className="flex items-center gap-1.5 mb-4">
-              {destination.destinationCities.slice(0, 2).map((city) => (
-                <span
-                  key={city}
-                  className="flex items-center gap-1 px-3 py-1 rounded-full bg-on-overlay/10 backdrop-blur-sm border border-on-overlay/20 text-label-sm text-primary-app uppercase tracking-widest"
-                >
-                  <MapPin className="w-3 h-3" />
-                  {city}
-                </span>
-              ))}
-            </div>
-          )}
-
-          {/* Package title */}
-          <h1 className="text-display-xl md:text-display-xxl text-on-overlay leading-hero mb-4">
-            {pkg.title}
-          </h1>
-
-          <p className="text-body-lg text-on-overlay/70 mb-6 max-w-xl leading-relaxed">
-            {pkg.excerpt}
-          </p>
-
-          {/* Stat chips */}
-          <div className="flex flex-wrap gap-3">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
-              <Clock className="w-4 h-4 text-primary-app" />
-              <span className="text-on-overlay text-body-sm font-medium">
-                {pkg.days} Days
-              </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
-              <Zap className="w-4 h-4 text-primary-app" />
-              <span className="text-on-overlay text-body-sm font-medium">
-                {totalActivities} Activities
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        imagePath={destination?.imagePath}
+        imageAlt={destination?.title}
+        title={pkg.title}
+        subtitle={pkg.excerpt}
+        tags={destination?.destinationCities.slice(0, 2)}
+        chips={[
+          { icon: <Clock className="w-4 h-4" />, label: `${pkg.days} Days` },
+          { icon: <Zap className="w-4 h-4" />, label: `${totalActivities} Activities` },
+        ]}
+        backLabel={destination?.title ?? "Back"}
+        onBack={() => router.back()}
+      />
 
       {/* ─── Overview ─── */}
       <Section id="overview" title="">
@@ -332,12 +298,25 @@ export default function PackageDetailPage({
         </Section>
       )}
 
+      <CtaBanner
+        heading={`Ready to Book ${pkg.title}?`}
+        subtext="Get in touch and our team will tailor every detail for your perfect trip."
+      />
+
       <BookingModal
         isOpen={bookingOpen}
-        onClose={() => setBookingOpen(false)}
-        packageId={pkg.id}
+        onClose={handleBookingClose}
         packageTitle={pkg.title}
-        destinationSlug={id}
+        isPending={bookingPending}
+        error={bookingError instanceof Error ? bookingError : null}
+        onSubmit={handleBookingSubmit}
+      />
+
+      <ModalSuccess
+        isOpen={bookingSuccessOpen}
+        title="Interest Received!"
+        message="Our team will reach out soon to help plan your perfect trip."
+        onClose={() => setBookingSuccessOpen(false)}
       />
     </div>
   );

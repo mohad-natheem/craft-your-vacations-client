@@ -1,5 +1,8 @@
-import { CalendarDays, Users, FileText, Clock } from "lucide-react";
+"use client";
+
+import { CalendarDays, Users, FileText, Clock, CheckCircle2 } from "lucide-react";
 import type { Booking, BookingStatus } from "@/app/types/api";
+import Button from "@/components/Button/Button";
 
 const MONTH_NAMES = [
   "January", "February", "March", "April", "May", "June",
@@ -14,14 +17,16 @@ function formatPreferredMonth(value: string): string {
 const statusConfig: Record<BookingStatus, { label: string; className: string }> = {
   pending: { label: "Pending Review", className: "bg-primary/15 text-primary" },
   confirmed: { label: "Confirmed", className: "bg-green-500/15 text-green-400" },
+  completed: { label: "Completed", className: "bg-primary/15 text-primary" },
   cancelled: { label: "Cancelled", className: "bg-red-500/15 text-red-400" },
 };
 
 interface BookingCardProps {
   booking: Booking;
+  onReviewClick?: () => void;
 }
 
-export default function BookingCard({ booking }: BookingCardProps) {
+export default function BookingCard({ booking, onReviewClick }: BookingCardProps) {
   const status = statusConfig[booking.status];
 
   return (
@@ -82,6 +87,22 @@ export default function BookingCard({ booking }: BookingCardProps) {
           <p className="text-body-sm text-text-muted leading-relaxed">
             {booking.notes}
           </p>
+        </div>
+      )}
+
+      {/* Review CTA — only for completed bookings */}
+      {booking.status === "completed" && (
+        <div className="flex items-center justify-between pt-2 border-t border-outline">
+          {booking.hasReview ? (
+            <div className="flex items-center gap-2 text-body-sm text-text-muted">
+              <CheckCircle2 className="w-4 h-4 text-primary shrink-0" />
+              Review submitted
+            </div>
+          ) : (
+            <Button variant="secondary" onClick={onReviewClick}>
+              Share Your Experience
+            </Button>
+          )}
         </div>
       )}
     </div>

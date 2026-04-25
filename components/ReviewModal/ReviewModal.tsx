@@ -1,0 +1,189 @@
+"use client";
+
+import { useState, useEffect } from "react";
+import { X, Star, ImagePlus } from "lucide-react";
+import TextAreaField from "@/components/TextAreaField/TextAreaField";
+import Button from "@/components/Button/Button";
+
+export interface ReviewSubmitData {
+  rating: number;
+  quote: string;
+  files: File[];
+}
+
+interface ReviewModalProps {
+  isOpen: boolean;
+  onClose: () => void;
+  packageTitle: string;
+  isPending: boolean;
+  error: Error | null;
+  onSubmit: (data: ReviewSubmitData) => void;
+}
+
+export default function ReviewModal({
+  isOpen,
+  onClose,
+  packageTitle,
+  isPending,
+  error,
+  onSubmit,
+}: ReviewModalProps) {
+  const [rating, setRating] = useState(0);
+  const [hoverRating, setHoverRating] = useState(0);
+  const [quote, setQuote] = useState("");
+  const [files, setFiles] = useState<File[]>([]);
+
+  // Close on Escape
+  useEffect(() => {
+    if (!isOpen) return;
+    function handleKey(e: KeyboardEvent) {
+      if (e.key === "Escape") onClose();
+    }
+    document.addEventListener("keydown", handleKey);
+    return () => document.removeEventListener("keydown", handleKey);
+  }, [isOpen, onClose]);
+
+  // Reset form when modal closes
+  useEffect(() => {
+    if (!isOpen) {
+      const t = setTimeout(() => {
+        setRating(0);
+        setHoverRating(0);
+        setQuote("");
+        setFiles([]);
+      }, 200);
+      return () => clearTimeout(t);
+    }
+  }, [isOpen]);
+
+  if (!isOpen) return null;
+
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    if (rating === 0 || !quote.trim()) return;
+    onSubmit({ rating, quote: quote.trim(), files });
+  }
+
+  const activeRating = hoverRating || rating;
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] flex items-center justify-center p-4"
+      role="dialog"
+      aria-modal="true"
+      aria-label={`Review ${packageTitle}`}
+    >
+      {/* Backdrop */}
+      <div
+        className="absolute inset-0 bg-overlay/60 backdrop-blur-sm"
+        onClick={onClose}
+        aria-hidden="true"
+      />
+
+      {/* Panel */}
+      <div className="relative z-10 w-full max-w-lg modal-panel shadow-lg shadow-primary/20 rounded-3xl p-8 flex flex-col gap-6">
+        {/* Close button */}
+        <button
+          type="button"
+          onClick={onClose}
+          className="absolute top-5 right-5 w-8 h-8 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-text transition-colors"
+          aria-label="Close"
+        >
+          <X className="w-4 h-4" />
+        </button>
+
+          <div>
+            <h2 className="text-headline-md text-text">Share your experience</h2>
+            <p className="text-body-md text-text-muted mt-1">{packageTitle}</p>
+          </div>
+
+          <form onSubmit={handleSubmit} className="flex flex-col gap-5">
+            {/* Star picker */}
+            <div className="flex flex-col gap-2">
+              <label className="text-label-sm text-text-muted uppercase tracking-widest">
+                Your rating <span className="text-red-400">*</span>
+              </label>
+              <div className="flex gap-2" onMouseLeave={() => setHoverRating(0)}>
+                {Array.from({ length: 5 }).map((_, i) => {
+                  const value = i + 1;
+                  return (
+                    <button
+                      key={i}
+                      type="button"
+                      onClick={() => setRating(value)}
+                      onMouseEnter={() => setHoverRating(value)}
+                      aria-label={`Rate ${value} star${value > 1 ? "s" : ""}`}
+                      className="transition-transform hover:scale-110"
+                    >
+                      <Star
+                        className={`w-7 h-7 transition-colors ${
+                          value <= activeRating
+                            ? "fill-primary text-primary"
+                            : "text-text-subtle"
+                        }`}
+                      />
+                    </button>
+                  );
+                })}
+              </div>
+            </div>
+
+            {/* Review text */}
+            <TextAreaField
+              id="review-quote"
+              label="Your review"
+              placeholder="Tell others about your experience — what made it special, what you loved, any highlights…"
+              rows={4}
+              maxLength={600}
+              required
+              value={quote}
+              onChange={(e) => setQuote(e.target.value)}
+            />
+
+            {/* Image upload */}
+            <div className="flex flex-col gap-2">
+              <label className="text-label-sm text-text-muted uppercase tracking-widest">
+                Trip photos <span className="text-text-subtle">(optional)</span>
+              </label>
+              <label
+                htmlFor="review-images"
+                className="flex items-center gap-3 px-4 py-3 rounded-2xl border border-dashed border-outline hover:border-primary/50 cursor-pointer transition-colors ghost-border"
+              >
+                <ImagePlus className="w-5 h-5 text-text-subtle shrink-0" />
+                <span className="text-body-sm text-text-muted">
+                  {files.length > 0
+                    ? `${files.length} photo${files.length > 1 ? "s" : ""} selected`
+                    : "Add up to 5 photos from your trip"}
+                </span>
+              </label>
+              <input
+                id="review-images"
+                type="file"
+                multiple
+                accept="image/*"
+                className="sr-only"
+                onChange={(e) => {
+                  setFiles(Array.from(e.target.files ?? []).slice(0, 5));
+                }}
+              />
+            </div>
+
+            {error && (
+              <p className="text-body-sm text-red-400">
+                {error.message || "Something went wrong. Please try again."}
+              </p>
+            )}
+
+            <Button
+              type="submit"
+              variant="primary"
+              disabled={isPending || rating === 0 || !quote.trim()}
+              className="w-full justify-center mt-2"
+            >
+              {isPending ? "Submitting…" : "Share My Experience"}
+            </Button>
+          </form>
+      </div>
+    </div>
+  );
+}

@@ -12,5 +12,9 @@ export const queryKeys = {
   bookings: {
     my: () => ['bookings', 'my'] as const,
   },
+  reviews: {
+    byDestination: (slug: string) => ['reviews', 'destination', slug] as const,
+    approved: () => ['reviews', 'approved'] as const,
+  },
 } as const;
  

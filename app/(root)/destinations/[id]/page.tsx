@@ -2,20 +2,20 @@
 
 import { use } from "react";
 import Image from "next/image";
-import {
-  MapPin,
-  Package,
-  Clock,
-  ScrollText,
-  ChevronLeft,
-} from "lucide-react";
+import { Package, Clock, ScrollText, Quote, MapPin } from "lucide-react";
 import { useDestination } from "@/hooks/useDestination";
 import { useDestinations } from "@/hooks/useDestinations";
+import { useDestinationReviews } from "@/hooks/useDestinationReviews";
 import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
 import ErrorState from "@/components/ErrorState/ErrorState";
 import Section from "@/components/Section/Sections";
 import PackageCard from "@/components/PackageCard/PackageCard";
 import DestinationLandscapeCard from "@/components/DestinationLandscapeCard/DestinationLandscapeCard";
+import ReviewCard from "@/components/ReviewCard/ReviewCard";
+import AutoSlider from "@/components/AutoSlider/AutoSlider";
+import PageHero from "@/components/PageHero/PageHero";
+import CtaBanner from "@/components/CtaBanner/CtaBanner";
+import FallbackBg from "@/public/introImage4.jpg";
 import { useRouter } from "next/navigation";
 
 export default function DestinationDetailPage({
@@ -26,6 +26,7 @@ export default function DestinationDetailPage({
   const { id } = use(params);
   const { data, isLoading, isError, error, refetch } = useDestination(id);
   const { data: allDestinations } = useDestinations();
+  const { data: reviews = [] } = useDestinationReviews(id);
   const router = useRouter();
 
   if (isLoading) {
@@ -47,13 +48,7 @@ export default function DestinationDetailPage({
     return <ErrorState title="Destination not found" />;
   }
 
-  const {
-    title,
-    imagePath,
-    content,
-    packages,
-    destinationCities,
-  } = data;
+  const { title, imagePath, content, packages, destinationCities } = data;
 
   const popularDestinations =
     allDestinations?.filter((d) => d.slug !== id).slice(0, 4) ?? [];
@@ -61,66 +56,24 @@ export default function DestinationDetailPage({
   return (
     <div className="section-gap">
       {/* Hero */}
-      <div className="relative w-full h-(--hero-height) min-h-130 overflow-hidden rounded-3xl mx-auto max-w-7xl px-6">
-        <Image
-          src={imagePath}
-          alt={title}
-          fill
-          className="object-cover rounded-3xl"
-          priority
-        />
-
-        {/* Layered gradients for depth */}
-        <div className="absolute inset-0 rounded-3xl bg-linear-to-t from-overlay/90 via-overlay/40 to-overlay/10" />
-        <div className="absolute inset-0 rounded-3xl bg-linear-to-r from-overlay/50 via-transparent to-transparent" />
-
-        {/* Breadcrumb */}
-        <div
-          onClick={() => router.back()}
-          className="absolute top-6 left-6 flex items-center gap-1.5 text-on-overlay/70 hover:text-on-overlay text-label-sm transition-colors cursor-pointer"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          Destinations
-        </div>
-
-        {/* Bottom content */}
-        <div className="absolute bottom-0 left-0 right-0 p-8 md:p-10">
-          {/* City tags */}
-          <div className="flex flex-wrap items-center gap-2 mb-5">
-            {destinationCities?.map((city) => (
-              <span
-                key={city}
-                className="flex items-center gap-1.5 px-3 py-1 rounded-full bg-on-overlay/10 backdrop-blur-sm border border-on-overlay/20 text-label-sm text-primary-app uppercase tracking-widest"
-              >
-                <MapPin className="w-3 h-3" />
-                {city}
-              </span>
-            ))}
-          </div>
-
-          {/* Title */}
-          <h1 className="text-display-xl md:text-display-xxl text-on-overlay leading-hero mb-8">
-            {title}
-          </h1>
-
-          {/* Stat chips row */}
-          <div className="flex flex-wrap gap-3">
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
-              <Package className="w-4 h-4 text-primary-app" />
-              <span className="text-on-overlay text-body-sm font-medium">
-                {packages.length} Packages
-              </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
-              <Clock className="w-4 h-4 text-primary-app" />
-              <span className="text-on-overlay text-body-sm font-medium">
-                {Math.min(...packages.map((p) => p.days))}–
-                {Math.max(...packages.map((p) => p.days))} Days
-              </span>
-            </div>
-          </div>
-        </div>
-      </div>
+      <PageHero
+        imagePath={imagePath}
+        imageAlt={title}
+        title={title}
+        tags={destinationCities}
+        chips={[
+          {
+            icon: <Package className="w-4 h-4" />,
+            label: `${packages.length} Packages`,
+          },
+          {
+            icon: <Clock className="w-4 h-4" />,
+            label: `${Math.min(...packages.map((p) => p.days))}–${Math.max(...packages.map((p) => p.days))} Days`,
+          },
+        ]}
+        backLabel="Destinations"
+        onBack={() => router.back()}
+      />
 
       {/* Info */}
       <Section id="destination-info" title="">
@@ -205,6 +158,67 @@ export default function DestinationDetailPage({
         </Section>
       )}
 
+      {/* What Our Guests Say */}
+      {reviews.length > 0 && (
+        <Section id="reviews" title="">
+          <div className="mb-8">
+            <div className="flex items-center gap-2 mb-1">
+              <Quote className="w-5 h-5 text-primary" strokeWidth={1.5} />
+              <h2 className="text-headline-lg text-text">
+                Voices of Our Travellers
+              </h2>
+            </div>
+            <p className="text-body-md text-text-muted">
+              Real experiences from people who crafted their journey here
+            </p>
+          </div>
+          <AutoSlider
+            visibleCount={reviews.length === 1 ? 1 : 3}
+            intervalMs={4000}
+          >
+            {reviews.map((review) => (
+              <ReviewCard key={review.id} {...review} />
+            ))}
+          </AutoSlider>
+        </Section>
+      )}
+
+      {/* Memories From Our Customers */}
+      {(() => {
+        const memories = reviews.flatMap((r) => r.imagePaths);
+        if (memories.length === 0) return null;
+        return (
+          <Section id="memories" title="">
+            <div className="mb-8">
+              <h2 className="text-headline-lg text-text">
+                Memories From Our Customers
+              </h2>
+              <p className="text-body-md text-text-muted mt-1">
+                Moments captured by fellow travellers
+              </p>
+            </div>
+            <AutoSlider
+              visibleCount={memories.length === 1 ? 1 : 4}
+              intervalMs={3000}
+            >
+              {memories.map((src, i) => (
+                <div
+                  key={i}
+                  className="relative aspect-square rounded-2xl overflow-hidden"
+                >
+                  <Image
+                    src={src}
+                    alt={`Customer memory ${i + 1}`}
+                    fill
+                    className="object-cover"
+                  />
+                </div>
+              ))}
+            </AutoSlider>
+          </Section>
+        );
+      })()}
+
       {/* Popular Destinations */}
       {popularDestinations.length > 0 && (
         <Section id="popular-destinations" title="">
@@ -231,6 +245,10 @@ export default function DestinationDetailPage({
           </div>
         </Section>
       )}
+
+      <CtaBanner
+        subtext="We can help you craft the perfect itinerary within your budget."
+      />
     </div>
   );
 }
