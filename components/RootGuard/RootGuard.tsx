@@ -4,7 +4,7 @@ import { redirect, usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
 
-const PROTECTED_PATHS = ["/destinations", "/packages", "/profile"];
+const PROTECTED_PATHS = ["/destinations", "/packages", "/profile", "/bookings"];
 
 export function RootGuard({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();

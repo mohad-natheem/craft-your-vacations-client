@@ -29,7 +29,7 @@ export default function HomePage() {
             </span>
             <h1 className="text-display-xl md:text-display-xxl text-text tracking-tighter leading-[0.9] mb-8">
               Explore the <br />
-              <span className="text-primary italic">Extraordinary</span>
+              <span className="text-stroke-primary italic inline-block px-1 py-1">Extraordinary</span>
             </h1>
             <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-10 leading-relaxed font-light">
               Bespoke journeys curated for the discerning traveler. From the

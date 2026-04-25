@@ -11,8 +11,6 @@ interface PackageCardProps extends PackageCardData {
 export function PackageCard({
   title,
   duration,
-  price,
-  priceLabel = "per person",
   features,
   ctaLabel = "View Details",
   href,
@@ -50,17 +48,7 @@ export function PackageCard({
           </div>
         </div>
 
-        {/* Price */}
-        <div className="flex items-end gap-2 pb-5 border-b border-outline">
-          <span
-            className={`text-display-sm font-bold leading-none ${highlighted ? "text-primary" : "text-text"}`}
-          >
-            {price}
-          </span>
-          <span className="text-body-sm text-text-muted mb-0.5">
-            {priceLabel}
-          </span>
-        </div>
+        <div className="h-px bg-outline" />
 
         {/* Features */}
         <ul className="flex flex-col gap-3 flex-1">

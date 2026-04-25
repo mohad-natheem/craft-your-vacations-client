@@ -4,7 +4,6 @@ import { use } from "react";
 import Image from "next/image";
 import {
   MapPin,
-  DollarSign,
   Package,
   Clock,
   ScrollText,
@@ -54,7 +53,6 @@ export default function DestinationDetailPage({
     content,
     packages,
     destinationCities,
-    minPackagePrice,
   } = data;
 
   const popularDestinations =
@@ -108,12 +106,6 @@ export default function DestinationDetailPage({
           {/* Stat chips row */}
           <div className="flex flex-wrap gap-3">
             <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
-              <DollarSign className="w-4 h-4 text-primary-app" />
-              <span className="text-on-overlay text-body-sm font-medium">
-                From ${minPackagePrice.toLocaleString()}
-              </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
               <Package className="w-4 h-4 text-primary-app" />
               <span className="text-on-overlay text-body-sm font-medium">
                 {packages.length} Packages
@@ -164,23 +156,6 @@ export default function DestinationDetailPage({
 
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                  <DollarSign className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-label-sm text-text-muted uppercase tracking-widest mb-0.5">
-                    Starting from
-                  </p>
-                  <p className="text-body-md text-text">
-                    ${minPackagePrice.toLocaleString()}{" "}
-                    <span className="text-text-muted text-body-sm">
-                      per person
-                    </span>
-                  </p>
-                </div>
-              </div>
-
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
                   <Package className="w-4 h-4 text-primary" />
                 </div>
                 <div>
@@ -212,8 +187,6 @@ export default function DestinationDetailPage({
                 key={pkg.key}
                 title={pkg.title}
                 duration={`${pkg.days} Days`}
-                price={`$${pkg.price.toLocaleString()}`}
-                priceLabel="per person"
                 href={`/destinations/${id}/packages/${pkg.key}`}
                 features={[
                   {

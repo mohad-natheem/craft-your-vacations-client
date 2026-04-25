@@ -39,8 +39,6 @@ export interface PackageFeature {
 export interface PackageCardData {
   title: string;
   duration: string;
-  price: string;
-  priceLabel?: string;
   features: PackageFeature[];
   ctaLabel?: string;
   href?: string;

@@ -11,6 +11,8 @@ import type {
   VerifyOtpRequest,
   StartResetRequest,
   ResetPasswordRequest,
+  Booking,
+  CreateBookingRequest,
 } from "@/app/types/api";
 
 export const destinationsApi = {
@@ -42,4 +44,9 @@ export const usersApi = {
   getProfile: () => api.get<User>("users/profile"),
   updateProfile: (body: UpdateProfileRequest) =>
     api.patch<User>("users/profile", body),
+};
+
+export const bookingsApi = {
+  create: (body: CreateBookingRequest) => api.post<Booking>("bookings", body),
+  getMyBookings: () => api.get<Booking[]>("bookings"),
 };

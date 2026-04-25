@@ -1,11 +1,10 @@
 "use client";
 
-import { use } from "react";
+import { use, useState } from "react";
 import Image from "next/image";
 import {
   ChevronLeft,
   Clock,
-  DollarSign,
   MapPin,
   ScrollText,
   Calendar,
@@ -19,6 +18,7 @@ import ErrorState from "@/components/ErrorState/ErrorState";
 import Section from "@/components/Section/Sections";
 import PackageCard from "@/components/PackageCard/PackageCard";
 import ItineraryDay from "@/components/ItineraryDay/ItineraryDay";
+import BookingModal from "@/components/BookingModal/BookingModal";
 
 export default function PackageDetailPage({
   params,
@@ -27,6 +27,7 @@ export default function PackageDetailPage({
 }) {
   const { id, key } = use(params);
   const router = useRouter();
+  const [bookingOpen, setBookingOpen] = useState(false);
 
   const {
     data: pkg,
@@ -128,12 +129,6 @@ export default function PackageDetailPage({
               </span>
             </div>
             <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
-              <DollarSign className="w-4 h-4 text-primary-app" />
-              <span className="text-on-overlay text-body-sm font-medium">
-                ${pkg.price.toLocaleString()} per person
-              </span>
-            </div>
-            <div className="flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-on-overlay/10 backdrop-blur-md border border-on-overlay/15">
               <Zap className="w-4 h-4 text-primary-app" />
               <span className="text-on-overlay text-body-sm font-medium">
                 {totalActivities} Activities
@@ -210,25 +205,6 @@ export default function PackageDetailPage({
             <div className="flex flex-col gap-4">
               <div className="flex items-start gap-3">
                 <div className="w-9 h-9 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
-                  <DollarSign className="w-4 h-4 text-primary" />
-                </div>
-                <div>
-                  <p className="text-label-sm text-text-muted uppercase tracking-widest mb-0.5">
-                    Price
-                  </p>
-                  <p className="text-display-sm text-primary font-bold leading-none">
-                    ${pkg.price.toLocaleString()}
-                  </p>
-                  <p className="text-body-sm text-text-muted mt-0.5">
-                    per person
-                  </p>
-                </div>
-              </div>
-
-              <div className="h-px bg-outline" />
-
-              <div className="flex items-start gap-3">
-                <div className="w-9 h-9 rounded-xl bg-primary/15 border border-primary/30 flex items-center justify-center shrink-0">
                   <Clock className="w-4 h-4 text-primary" />
                 </div>
                 <div>
@@ -266,6 +242,7 @@ export default function PackageDetailPage({
 
             <button
               type="button"
+              onClick={() => setBookingOpen(true)}
               className="w-full btn-gradient font-semibold py-3 rounded-2xl transition-opacity hover:opacity-90 mt-2"
             >
               Book This Package
@@ -337,8 +314,6 @@ export default function PackageDetailPage({
                 key={p.key}
                 title={p.title}
                 duration={`${p.days} Days`}
-                price={`$${p.price.toLocaleString()}`}
-                priceLabel="per person"
                 href={`/destinations/${id}/packages/${p.key}`}
                 features={[
                   {
@@ -356,6 +331,14 @@ export default function PackageDetailPage({
           </div>
         </Section>
       )}
+
+      <BookingModal
+        isOpen={bookingOpen}
+        onClose={() => setBookingOpen(false)}
+        packageId={pkg.id}
+        packageTitle={pkg.title}
+        destinationSlug={id}
+      />
     </div>
   );
 }

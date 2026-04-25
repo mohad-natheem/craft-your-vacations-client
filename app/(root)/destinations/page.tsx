@@ -36,7 +36,9 @@ export function DestinationsScreen() {
             <h1 className="text-display-xl md:text-display-xxl text-text tracking-tighter leading-[0.9]">
               The Curated
             </h1>
-            <span className="text-display-xl md:text-display-xxl tracking-tighter leading-[0.9] mb-8 text-primary italic">Horizon</span>
+            <span className="text-display-xl md:text-display-xxl tracking-tighter leading-[0.9] mb-8 text-stroke-primary italic">
+              Horizon
+            </span>
           </div>
           <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-10 leading-relaxed font-light">
             Discover hand-picked journeys that bridge the gap between luxury and

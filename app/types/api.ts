@@ -117,3 +117,26 @@ export interface VerifyOtpRequest {
   mobileNumber: string;
   otp: string;
 }
+
+export type BookingStatus = "pending" | "confirmed" | "cancelled";
+
+export interface CreateBookingRequest {
+  packageId: number;
+  packageTitle: string;
+  destinationSlug: string;
+  travelersCount: number;
+  preferredMonth: string; // "YYYY-MM"
+  notes?: string;
+}
+
+export interface Booking {
+  id: number;
+  packageId: number;
+  packageTitle: string;
+  destinationSlug: string;
+  travelersCount: number;
+  preferredMonth: string;
+  notes?: string;
+  status: BookingStatus;
+  createdAt: string;
+}

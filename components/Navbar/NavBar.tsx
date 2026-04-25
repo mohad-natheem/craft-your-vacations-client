@@ -22,7 +22,7 @@ interface NavbarProps {
 const defaultLinks: NavLink[] = [
   { label: "Home", href: "/", replace: true },
   { label: "Destinations", href: "/destinations" },
-  { label: "Packages", href: "/packages" },
+  { label: "My Bookings", href: "/bookings" },
   { label: "Components", href: "/components" },
 ];
 

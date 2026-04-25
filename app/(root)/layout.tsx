@@ -1,5 +1,6 @@
 import { Navbar } from "@/components/Navbar/NavBar";
 import { RootGuard } from "@/components/RootGuard/RootGuard";
+import WhatsAppFAB from "@/components/WhatsAppFAB/WhatsAppFAB";
 
 export default function RootLayout({
   children,
@@ -10,6 +11,7 @@ export default function RootLayout({
     <RootGuard>
       <Navbar />
       <main>{children}</main>
+      <WhatsAppFAB />
     </RootGuard>
   );
 }

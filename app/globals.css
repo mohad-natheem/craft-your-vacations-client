@@ -4,7 +4,6 @@
    Tailwind v4 reads these via @theme and maps them to utility classes.
    Rule: Never hardcode a hex value in a component — always use a token. */
 
-@import url("https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&display=swap");
 @import "tailwindcss";
 
 /* --------------------------------------------------------------------------
@@ -42,8 +41,8 @@
   --glass-bg: rgba(236, 238, 240, 0.7);
   --glass-blur: 20px;
 
-  --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-body: "Plus Jakarta Sans", sans-serif;
+  --font-display: var(--font-exo2), sans-serif;
+  --font-body: var(--font-exo2), sans-serif;
 
   /* --- Hero image overlays (same for both themes — always on top of photos) --- */
   --color-overlay: #000000;
@@ -89,8 +88,8 @@
   --glass-blur: 16px;
 
   /* --- Typography Scale --- */
-  --font-display: "Plus Jakarta Sans", sans-serif;
-  --font-body: "Plus Jakarta Sans", sans-serif;
+  --font-display: var(--font-exo2), sans-serif;
+  --font-body: var(--font-exo2), sans-serif;
 
   /* --- Spacing rhythm --- */
   --section-gap: 80px;
@@ -265,6 +264,15 @@
    5. COMPONENT UTILITIES — reusable patterns from the design spec
    -------------------------------------------------------------------------- */
 @layer utilities {
+  /* Outlined text using primary color */
+  .text-stroke-primary {
+    -webkit-text-stroke: 2px var(--color-primary);
+    color: var(--color-surface-low);
+    paint-order: stroke fill;
+    text-shadow: 0 0 12px color-mix(in srgb, var(--color-primary) 50%, transparent),
+                 0 0 24px color-mix(in srgb, var(--color-primary) 25%, transparent);
+  }
+
   /* Glassmorphism — for navbar, floating cards */
   .glass {
     background: var(--glass-bg);

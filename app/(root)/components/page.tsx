@@ -132,7 +132,6 @@ const packages = [
   {
     title: "Explorer",
     duration: "7 days · 6 nights",
-    price: "$1,299",
     features: [
       { icon: "flight", text: "Return flights included" },
       { icon: "hotel", text: "3-star accommodation" },
@@ -144,7 +143,6 @@ const packages = [
   {
     title: "Voyager",
     duration: "10 days · 9 nights",
-    price: "$2,499",
     features: [
       { icon: "flight", text: "Business class flights" },
       { icon: "hotel", text: "5-star accommodation" },
@@ -157,7 +155,6 @@ const packages = [
   {
     title: "Luminary",
     duration: "14 days · 13 nights",
-    price: "$4,899",
     features: [
       { icon: "flight", text: "First class flights" },
       { icon: "villa", text: "Private villa or suite" },

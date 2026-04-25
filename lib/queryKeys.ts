@@ -9,5 +9,8 @@ export const queryKeys = {
   profile: {
     me: () => ['profile', 'me'] as const,
   },
+  bookings: {
+    my: () => ['bookings', 'my'] as const,
+  },
 } as const;
  
