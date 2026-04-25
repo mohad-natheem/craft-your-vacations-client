@@ -98,15 +98,18 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
           )}
         </div>
 
-        {/* Mobile hamburger */}
-        <button
-          type="button"
-          className="md:hidden w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
-          aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
-          onClick={toggleMobileMenu}
-        >
-          {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-        </button>
+        {/* Mobile controls */}
+        <div className="md:hidden flex items-center gap-2">
+          <ToggleTheme />
+          <button
+            type="button"
+            className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
+            aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
+            onClick={toggleMobileMenu}
+          >
+            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
+          </button>
+        </div>
       </div>
 
       {/* Mobile menu */}
@@ -125,12 +128,19 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
               {link.label}
             </Link>
           ))}
-          {isUserLogged && (
+          {isUserLogged ? (
             <Link
               href="/profile"
               className="px-4 py-3 rounded-lg text-body-md transition-colors text-text-muted hover:text-text hover:bg-surface-high"
             >
               Profile
+            </Link>
+          ) : (
+            <Link
+              href="/login"
+              className="px-4 py-3 rounded-lg text-body-md transition-colors text-text-muted hover:text-text hover:bg-surface-high"
+            >
+              Login
             </Link>
           )}
         </div>

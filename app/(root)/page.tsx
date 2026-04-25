@@ -9,6 +9,7 @@ import {
   Quote,
 } from "lucide-react";
 import Image from "next/image";
+import { useState, useEffect } from "react";
 import IntroIcon1 from "@/public/introImage1.jpg";
 import IntroIcon5 from "@/public/introImage5.jpg";
 import CtaBanner from "@/components/CtaBanner/CtaBanner";
@@ -22,22 +23,40 @@ export default function HomePage() {
   const { data, isLoading } = useDestinations();
   const { data: reviews = [] } = useApprovedReviews();
 
+  const [sliderVisibleCount, setSliderVisibleCount] = useState(1);
+
+  useEffect(() => {
+    const update = () => {
+      if (reviews.length === 1) {
+        setSliderVisibleCount(1);
+        return;
+      }
+      const w = window.innerWidth;
+      setSliderVisibleCount(w >= 1024 ? 3 : w >= 640 ? 2 : 1);
+    };
+    update();
+    window.addEventListener("resize", update);
+    return () => window.removeEventListener("resize", update);
+  }, [reviews.length]);
+
   if (isLoading) {
     return <Loader />;
   }
   return (
     <div className="no-scrollbar overflow-y-auto">
-      <section className="relative min-h-[75vh] lg:h-230.25 px-6 md:pl-30 md:pr-0 flex items-center overflow-hidden bg-surface-low">
+      <section className="relative min-h-[60vh] md:min-h-[75vh] lg:h-230.25 px-6 md:pl-30 md:pr-0 pt-20 md:pt-0 flex items-center overflow-hidden bg-surface-low">
         <div className="flex flex-row max-w-6xl">
           <div className="z-10 max-w-3xl">
             <span className="label text-primary font-bold tracking-[0.2em] mb-6 block uppercase text-label-sm">
               Elevate Your Perspective
             </span>
-            <h1 className="text-display-xl md:text-display-xxl text-text tracking-tighter leading-[0.9] mb-8">
+            <h1 className="text-display-lg md:text-display-xl lg:text-display-xxl text-text tracking-tighter leading-[0.9] mb-8">
               Explore the <br />
-              <span className="text-stroke-primary italic inline-block px-1 py-1">Extraordinary</span>
+              <span className="text-stroke-primary italic inline-block px-1 py-1">
+                Extraordinary
+              </span>
             </h1>
-            <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-10 leading-relaxed font-light">
+            <p className="text-text-muted text-body-lg md:text-xl max-w-xl mb-6 md:mb-10 leading-relaxed font-light">
               Bespoke journeys curated for the discerning traveler. From the
               silence of Nordic fjords to the vibrant pulse of tropical
               archipelagos.
@@ -68,7 +87,7 @@ export default function HomePage() {
         </div>
       </section>
       {/* About Us */}
-      <section id="about" className="mt-16">
+      <section id="about" className="mt-10 md:mt-16">
         <div className="mx-auto max-w-7xl px-6">
           {/* Top block */}
           <div className="flex flex-col lg:flex-row lg:items-center gap-12 mb-16">
@@ -145,11 +164,11 @@ export default function HomePage() {
       </section>
       <section
         id={"curateddestinations"}
-        className="mt-16 border-t border-outline"
+        className="mt-10 md:mt-16 border-t border-outline"
       >
         {data && (
-          <div className="mx-auto max-w-7xl px-6 mt-16 ">
-            <div className="flex flex-row items-center justify-between mb-16">
+          <div className="mx-auto max-w-7xl px-6 mt-8 md:mt-16">
+            <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between mb-8 md:mb-16">
               <div className="flex flex-col gap-4">
                 <span className="text-headline-lg text-text">
                   Curated Destinations
@@ -159,7 +178,7 @@ export default function HomePage() {
                   untamed nature.
                 </span>
               </div>
-              <div>
+              <div className="self-start md:self-auto">
                 <Button href="/destinations" variant="text">
                   View all
                 </Button>
@@ -190,9 +209,12 @@ export default function HomePage() {
 
       {/*Voices of Our Travellers*/}
       {reviews.length > 0 && (
-        <section id="testimonials" className="mt-16 border-t border-outline">
-          <div className="mx-auto max-w-7xl px-6 mt-16">
-            <div className="flex flex-row items-center justify-between mb-12">
+        <section
+          id="testimonials"
+          className="mt-10 md:mt-16 border-t border-outline"
+        >
+          <div className="mx-auto max-w-7xl px-6 mt-8 md:mt-16">
+            <div className="flex flex-row items-center justify-between mb-6 md:mb-12">
               <div className="flex flex-col gap-3">
                 <div className="flex items-center gap-2">
                   <Quote className="w-5 h-5 text-primary" strokeWidth={1.5} />
@@ -205,10 +227,7 @@ export default function HomePage() {
                 </span>
               </div>
             </div>
-            <AutoSlider
-              visibleCount={reviews.length === 1 ? 1 : 3}
-              intervalMs={4500}
-            >
+            <AutoSlider visibleCount={sliderVisibleCount} intervalMs={4500}>
               {reviews.slice(0, 6).map((review) => (
                 <ReviewCard key={review.id} {...review} />
               ))}
