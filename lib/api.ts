@@ -8,12 +8,23 @@ const client: AxiosInstance = axios.create({
 
 client.interceptors.response.use(
   (response) => response,
-  (error: unknown) => {
+  async (error: unknown) => {
     if (axios.isAxiosError(error)) {
-      if (error.response?.status === 401) {
-        // window.location.href = "/login";
-        return Promise.reject(new Error("Session expired"));
+      const originalRequest = error.config as AxiosRequestConfig & {
+        _retried?: boolean;
+      };
+      if (error.response?.status === 401 && !originalRequest._retried) {
+        originalRequest._retried = true;
+        // Force NextAuth to run the jwt callback (refresh logic) and update the cookie
+        const session = await fetch("/api/auth/session").then((r) => r.json());
+        if (session?.error === "RefreshAccessTokenError" || !session?.user) {
+          window.location.href = "/login";
+          return Promise.reject(new Error("Session expired"));
+        }
+        // Retry the original request once with the refreshed token
+        return client(originalRequest);
       }
+
       const message =
         (error.response?.data as { message?: string })?.message ??
         error.message ??

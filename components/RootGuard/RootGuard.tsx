@@ -1,5 +1,5 @@
 "use client";
-import { useSession } from "next-auth/react";
+import { signOut, useSession } from "next-auth/react";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
@@ -18,6 +18,11 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
   useEffect(() => {
     if (status === "loading") return;
 
+    if (session?.error === "RefreshAccessTokenError") {
+      signOut({ callbackUrl: "/login" });
+      return;
+    }
+
     if (isProtected && !session) {
       redirect("/login");
     }
@@ -27,7 +32,8 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
     }
   }, [session, status, pathname, router, isProtected]);
 
-if (status === "loading") return <LoadingSpinner />;
+  if (status === "loading") return <LoadingSpinner />;
+  if (session?.error === "RefreshAccessTokenError") return null;
   if (isProtected && !session) return null;
   if (session && session.user.phoneVerified === false) return null;
 

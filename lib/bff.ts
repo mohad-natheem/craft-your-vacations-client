@@ -1,6 +1,5 @@
-import { getServerSession } from "next-auth/next";
+import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
-import { authOptions } from "@/lib/auth";
 
 const BACKEND_URL = "http://localhost:5025";
 
@@ -42,9 +41,11 @@ export async function bffFetch<T>(
   } = options;
 
   // 1. Auth check
-  const session = isPublic ? null : await getServerSession(authOptions);
+  const token = isPublic
+    ? null
+    : await getToken({ req, secret: process.env.NEXTAUTH_SECRET! });
 
-  if (!isPublic && !session?.user) {
+  if (!isPublic && !token?.userId) {
     return {
       ok: false,
       response: NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
@@ -58,9 +59,8 @@ export async function bffFetch<T>(
     ? { ...headers }
     : { "Content-Type": "application/json", ...headers };
 
-  if (session?.user?.userId) {
-    console.log(`Setting User id in header: ${session.user.userId}`);
-    fetchHeaders["X-User-Id"] = session.user.userId;
+  if (token?.backendAccessToken) {
+    fetchHeaders["Authorization"] = `Bearer ${token.backendAccessToken}`;
   }
 
   // 3. Build fetch options (supports both Next.js revalidate and standard cache)

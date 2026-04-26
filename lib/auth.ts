@@ -1,9 +1,32 @@
 import GoogleProvider from "next-auth/providers/google";
 import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from "next-auth";
-import { encode, decode } from "next-auth/jwt";
+import type { JWT } from "next-auth/jwt";
 
 const BACKEND_URL = "http://localhost:5025";
+
+async function refreshBackendToken(token: JWT): Promise<JWT> {
+  try {
+    const res = await fetch(`${BACKEND_URL}/api/Auth/refresh`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ refreshToken: token.backendRefreshToken }),
+    });
+    if (!res.ok) throw new Error("Refresh failed");
+    console.log("[auth] Refreshed backend token successfully");
+    const data = await res.json();
+    return {
+      ...token,
+      backendAccessToken: data.accessToken,
+      backendRefreshToken: data.refreshToken,
+      backendTokenExpiry: data.accessTokenExpiry,
+      error: undefined,
+    };
+  } catch {
+    console.log("[auth] Token refresh FAILED");
+    return { ...token, error: "RefreshAccessTokenError" };
+  }
+}
 
 export const authOptions: NextAuthOptions = {
   providers: [
@@ -31,7 +54,6 @@ export const authOptions: NextAuthOptions = {
             }),
           });
         } catch (err) {
-          console.error("[authorize] fetch threw:", err);
           throw new Error("ServiceUnavailable");
         }
 
@@ -48,6 +70,9 @@ export const authOptions: NextAuthOptions = {
           name: user.name ?? null,
           image: user.image ?? null,
           phoneVerified: user.phoneVerified ?? false,
+          backendAccessToken: user.accessToken,
+          backendRefreshToken: user.refreshToken,
+          backendTokenExpiry: user.accessTokenExpiry,
         };
       },
     }),
@@ -85,8 +110,10 @@ export const authOptions: NextAuthOptions = {
           }
           const backendUser = await res.json();
           user.id = String(backendUser.userId);
-          (user as { phoneVerified?: boolean }).phoneVerified =
-            backendUser.phoneVerified ?? false;
+          user.phoneVerified = backendUser.phoneVerified ?? false;
+          user.backendAccessToken = backendUser.accessToken;
+          user.backendRefreshToken = backendUser.refreshToken;
+          user.backendTokenExpiry = backendUser.accessTokenExpiry;
         } catch (err) {
           console.error("[signIn] fetch threw:", err);
           return "/login?error=ServiceUnavailable";
@@ -96,21 +123,33 @@ export const authOptions: NextAuthOptions = {
     },
 
     async jwt({ token, user, trigger, session }) {
-      // Allow client-side session update (e.g. after OTP verification)
+      // Client-side session update (e.g. after OTP verification)
       if (trigger === "update" && session) {
         return { ...token, ...session };
       }
+      // Initial login — store backend tokens
       if (user) {
         token.userId = user.id;
-        token.phoneVerified =
-          (user as { phoneVerified?: boolean }).phoneVerified ?? false;
+        token.phoneVerified = user.phoneVerified ?? false;
+        token.backendAccessToken = user.backendAccessToken!;
+        token.backendRefreshToken = user.backendRefreshToken!;
+        token.backendTokenExpiry = user.backendTokenExpiry!;
+        return token;
       }
-      return token;
+
+      // Token still valid (with 2min buffer) — return as-is
+      if (Date.now() < (token.backendTokenExpiry - 120) * 1000) {
+        return token;
+      }
+
+      // Token expiring/expired — attempt refresh
+      return refreshBackendToken(token);
     },
 
     async session({ session, token }) {
       session.user.userId = token.userId as string;
-      session.user.phoneVerified = (token.phoneVerified as boolean) ?? false;
+      session.user.phoneVerified = token.phoneVerified ?? false;
+      if (token.error) session.error = token.error;
       return session;
     },
   },
