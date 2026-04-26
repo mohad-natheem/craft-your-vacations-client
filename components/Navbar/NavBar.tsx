@@ -43,7 +43,11 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
     >
       <div className="mx-auto px-10 h-16 flex items-center justify-around">
         {/* Logo */}
-        <Link href="/" replace className="flex items-center justify-center gap-2">
+        <Link
+          href="/"
+          replace
+          className="flex items-center justify-center gap-2"
+        >
           <Image src={Logo} alt="Logo" className="w-10" />
           <Image src={LogoText} alt="Logo" className="w-25" />
         </Link>
@@ -77,22 +81,11 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
 
         {/* Action buttons */}
         <div className="hidden md:flex items-center gap-2">
-          <button
-            type="button"
-            aria-label="Search"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
-          >
-            <Search className="w-5 h-5" />
-          </button>
           <ToggleTheme />
           {isUserLogged ? (
-            <Link
-              href="/profile"
-              className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
-              aria-label="Profile"
-            >
+            <Button variant="icon" href="/profile" aria-label="Profile">
               <CircleUser className="w-5 h-5" />
-            </Link>
+            </Button>
           ) : (
             <Button href="/login">Login</Button>
           )}
@@ -101,14 +94,17 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
         {/* Mobile controls */}
         <div className="md:hidden flex items-center gap-2">
           <ToggleTheme />
-          <button
-            type="button"
-            className="w-10 h-10 flex items-center justify-center rounded-full bg-surface-high text-text-muted hover:text-primary transition-colors"
+          <Button
+            variant="icon"
             aria-label={mobileMenuOpen ? "Close menu" : "Open menu"}
             onClick={toggleMobileMenu}
           >
-            {mobileMenuOpen ? <X className="w-5 h-5" /> : <Menu className="w-5 h-5" />}
-          </button>
+            {mobileMenuOpen ? (
+              <X className="w-5 h-5" />
+            ) : (
+              <Menu className="w-5 h-5" />
+            )}
+          </Button>
         </div>
       </div>
 

@@ -15,7 +15,7 @@ function ToggleTheme() {
   if (!mounted) {
     return (
       <Button disabled={true}>
-        <Sun className="h-4 w-4" />
+        <Sun className="h-5 w-5" />
       </Button>
     );
   }
@@ -26,7 +26,11 @@ function ToggleTheme() {
         setTheme(theme == "dark" ? "light" : "dark");
       }}
     >
-      {theme == "dark" ? <Moon className="" /> : <Sun className="" />}
+      {theme == "dark" ? (
+        <Moon className="h-4 w-5" />
+      ) : (
+        <Sun className="h-5 w-5" />
+      )}
     </Button>
   );
 }
