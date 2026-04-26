@@ -67,7 +67,7 @@ export function ItineraryDay({
         </span>
 
         {/* Title */}
-        <span className="flex-1 text-headline-sm text-text group-hover:text-primary transition-colors">
+        <span className="flex-1 min-w-0 text-body-md sm:text-headline-sm text-text group-hover:text-primary transition-colors">
           {title}
         </span>
 
@@ -89,8 +89,8 @@ export function ItineraryDay({
           </div>
         )}
 
-        {/* Activity count */}
-        <span className="shrink-0 px-2.5 py-1 rounded-full bg-surface-high text-text-muted text-label-sm">
+        {/* Activity count — hidden on mobile, shown in expanded body instead */}
+        <span className="hidden sm:inline-flex shrink-0 px-2.5 py-1 rounded-full bg-surface-high text-text-muted text-label-sm">
           {activities.length}{" "}
           {activities.length === 1 ? "activity" : "activities"}
         </span>
@@ -111,6 +111,12 @@ export function ItineraryDay({
       >
         <div className="px-5 pb-5">
           <div className="h-px bg-outline mb-4" />
+
+          {/* Activity count — mobile only */}
+          <span className="sm:hidden inline-flex mb-3 px-2.5 py-1 rounded-full bg-surface-high text-text-muted text-label-sm">
+            {activities.length}{" "}
+            {activities.length === 1 ? "activity" : "activities"}
+          </span>
 
           <div className="flex flex-col gap-3">
             {activities.map((activity, i) => {

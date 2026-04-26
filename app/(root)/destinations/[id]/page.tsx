@@ -85,7 +85,6 @@ export default function DestinationDetailPage({
             label: `${Math.min(...packages.map((p) => p.days))}–${Math.max(...packages.map((p) => p.days))} Days`,
           },
         ]}
-        backLabel="Destinations"
         onBack={() => router.back()}
       />
 

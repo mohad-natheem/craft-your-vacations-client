@@ -17,8 +17,6 @@ interface PageHeroProps {
   tags?: string[];
   /** Stat chips shown below the title (e.g. "12 Packages", "5–10 Days"). */
   chips?: HeroChip[];
-  /** Label shown next to the back chevron. */
-  backLabel: string;
   onBack: () => void;
   /** Use the compact hero height (for nested pages like package detail). */
   compact?: boolean;
@@ -32,7 +30,6 @@ export default function PageHero({
   subtitle,
   tags,
   chips,
-  backLabel,
   onBack,
   className = "",
 }: PageHeroProps) {
@@ -59,18 +56,17 @@ export default function PageHero({
 
       {/* Back button */}
       <button
-          type="button"
-          onClick={onBack}
-          className="absolute top-6 left-0 right-0 mx-auto max-w-7xl px-6 flex items-center gap-1.5 text-on-overlay/70 hover:text-on-overlay text-label-sm transition-colors cursor-pointer"
-        >
-          <ChevronLeft className="w-4 h-4" />
-          {backLabel}
-        </button>
+        type="button"
+        onClick={onBack}
+        className="absolute top-6 left-0 right-0 mx-auto max-w-7xl px-6 text-on-overlay/70 hover:text-on-overlay text-label-sm transition-colors cursor-pointer"
+      >
+        <ChevronLeft className="w-8 h-8" />
+      </button>
 
       {/* Bottom content */}
       <div className="absolute bottom-0 left-0 right-0 py-8 px-6 flex flex-col max-w-7xl mx-auto">
         {/* Location tag pills */}
-        
+
         {tags && tags.length > 0 && (
           <div className="flex flex-wrap items-center gap-2 mb-5">
             {tags.map((tag) => (

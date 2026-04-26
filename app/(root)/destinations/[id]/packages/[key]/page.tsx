@@ -100,7 +100,6 @@ export default function PackageDetailPage({
           { icon: <Clock className="w-4 h-4" />, label: `${pkg.days} Days` },
           { icon: <Zap className="w-4 h-4" />, label: `${totalActivities} Activities` },
         ]}
-        backLabel={destination?.title ?? "Back"}
         onBack={() => router.back()}
       />
 
