@@ -5,6 +5,7 @@ import type { DefaultSession } from "next-auth";
 declare module "next-auth" {
   interface User {
     phoneVerified?: boolean;
+    role?: string;
     backendAccessToken?: string;
     backendRefreshToken?: string;
     backendTokenExpiry?: number;
@@ -14,6 +15,7 @@ declare module "next-auth" {
     user: {
       userId: string;
       phoneVerified: boolean;
+      role?: string;
     } & DefaultSession["user"];
     error?: "RefreshAccessTokenError";
   }
@@ -23,6 +25,7 @@ declare module "next-auth/jwt" {
   interface JWT {
     userId: string;
     phoneVerified: boolean;
+    role?: string;
     backendAccessToken: string;
     backendRefreshToken: string;
     backendTokenExpiry: number;

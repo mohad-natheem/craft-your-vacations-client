@@ -161,3 +161,70 @@ export interface CreateReviewRequest {
   rating: number;
   quote: string;
 }
+
+// --- Admin types ---
+
+export interface AdminBookingCustomer {
+  id: string;
+  name: string;
+  email: string;
+  mobileNumber: string;
+  nationality?: string;
+  countryOfResidence?: string;
+  profession?: string;
+}
+
+export interface AdminBooking extends Booking {
+  customer: AdminBookingCustomer;
+}
+
+export interface AdminReview extends Review {
+  isApproved: boolean;
+}
+
+export interface Customer {
+  id: string;
+  name: string;
+  email: string;
+  mobileNumber: string;
+  phoneVerified: boolean;
+  nationality?: string;
+  countryOfResidence?: string;
+  profession?: string;
+  dateOfBirth?: string;
+  createdAt: string;
+  totalBookings: number;
+}
+
+export interface AdminUpdateBookingRequest {
+  status?: BookingStatus;
+  travelersCount?: number;
+  preferredMonth?: string;
+  notes?: string;
+}
+
+export interface CreateDestinationRequest {
+  slug: string;
+  title: string;
+  imagePath: string;
+  content: string;
+  isFeatured: boolean;
+  destinationCities: string[];
+}
+
+export interface CreatePackageRequest {
+  key: string;
+  title: string;
+  price: number;
+  days: number;
+  excerpt: string;
+  itinerary: ItineraryDay[];
+}
+
+export interface UpdatePackageRequest {
+  title?: string;
+  price?: number;
+  days?: number;
+  excerpt?: string;
+  itinerary?: ItineraryDay[];
+}

@@ -15,6 +15,13 @@ import type {
   CreateBookingRequest,
   Review,
   CreateReviewRequest,
+  AdminBooking,
+  AdminReview,
+  AdminUpdateBookingRequest,
+  Customer,
+  CreateDestinationRequest,
+  CreatePackageRequest,
+  UpdatePackageRequest,
 } from "@/app/types/api";
 
 export const destinationsApi = {
@@ -60,4 +67,33 @@ export const reviewsApi = {
   getByDestination: (slug: string) =>
     api.get<Review[]>(`reviews/destination/${slug}`),
   getApproved: () => api.get<Review[]>("reviews/approved"),
+};
+
+export const adminApi = {
+  // Bookings
+  getBookings: (status?: string) =>
+    api.get<AdminBooking[]>(`admin/bookings${status ? `?status=${status}` : ""}`),
+  updateBooking: (id: number, body: AdminUpdateBookingRequest) =>
+    api.patch<AdminBooking>(`admin/bookings/${id}`, body),
+  // Reviews
+  getReviews: () => api.get<AdminReview[]>("admin/reviews"),
+  approveReview: (id: number) =>
+    api.post<AdminReview>(`admin/reviews/${id}/approve`, {}),
+  deleteReview: (id: number) => api.delete<void>(`admin/reviews/${id}`),
+  // Customers
+  getCustomers: () => api.get<Customer[]>("admin/users"),
+  getCustomer: (id: string) => api.get<Customer>(`admin/users/${id}`),
+  // Destinations
+  createDestination: (body: CreateDestinationRequest) =>
+    api.post<Destination>("admin/destinations", body),
+  updateDestination: (id: number, body: Partial<CreateDestinationRequest>) =>
+    api.patch<Destination>(`admin/destinations/${id}`, body),
+  deleteDestination: (id: number) => api.delete<void>(`admin/destinations/${id}`),
+  // Packages
+  createPackage: (destId: number, body: CreatePackageRequest) =>
+    api.post<PackageDetail>(`admin/destinations/${destId}/packages`, body),
+  updatePackage: (destId: number, key: string, body: UpdatePackageRequest) =>
+    api.put<PackageDetail>(`admin/destinations/${destId}/packages/${key}`, body),
+  deletePackage: (destId: number, key: string) =>
+    api.delete<void>(`admin/destinations/${destId}/packages/${key}`),
 };

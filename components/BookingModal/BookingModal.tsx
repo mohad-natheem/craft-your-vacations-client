@@ -7,6 +7,7 @@ import SelectField from "@/components/SelectField/SelectField";
 import TextAreaField from "@/components/TextAreaField/TextAreaField";
 import Button from "@/components/Button/Button";
 import type { SelectOption } from "@/app/types/component";
+import { MONTH_NAMES_FULL } from "@/lib/constants";
 
 export interface BookingSubmitData {
   travelersCount: number;
@@ -23,17 +24,12 @@ interface BookingModalProps {
   onSubmit: (data: BookingSubmitData) => void;
 }
 
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
 function getMonthOptions(): SelectOption[] {
   const now = new Date();
   return Array.from({ length: 12 }, (_, i) => {
     const d = new Date(now.getFullYear(), now.getMonth() + i, 1);
     const value = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
-    const label = `${MONTH_NAMES[d.getMonth()]} ${d.getFullYear()}`;
+    const label = `${MONTH_NAMES_FULL[d.getMonth()]} ${d.getFullYear()}`;
     return { value, label };
   });
 }

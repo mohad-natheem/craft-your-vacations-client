@@ -1,0 +1,144 @@
+"use client";
+
+import { useState } from "react";
+import { useAdminReviews } from "@/hooks/useAdminReviews";
+import { useAdminApproveReview } from "@/hooks/useAdminApproveReview";
+import { useAdminDeleteReview } from "@/hooks/useAdminDeleteReview";
+import LoadingSpinner from "@/components/LoadingSpinner/LoadingSpinner";
+import ErrorState from "@/components/ErrorState/ErrorState";
+import Button from "@/components/Button/Button";
+import ConfirmDialog from "@/components/ConfirmDialog/ConfirmDialog";
+import { Star, Check, Trash2 } from "lucide-react";
+import AdminPageHeader from "@/app/(admin)/components/AdminPageHeader";
+import AdminFilterTabs from "@/app/(admin)/components/AdminFilterTabs";
+
+const TABS = [
+  { value: "pending", label: "Pending" },
+  { value: "approved", label: "Approved" },
+];
+
+export default function AdminReviewsPage() {
+  const [activeTab, setActiveTab] = useState("pending");
+  const { data: reviews, isLoading, isError, error, refetch } = useAdminReviews();
+  const approveReview = useAdminApproveReview();
+  const deleteReview = useAdminDeleteReview();
+  const [confirmApproveId, setConfirmApproveId] = useState<number | null>(null);
+  const [confirmDeleteId, setConfirmDeleteId] = useState<number | null>(null);
+
+  if (isLoading) return <LoadingSpinner message="Loading reviews…" fullScreen={false} />;
+  if (isError)
+    return (
+      <ErrorState message={error instanceof Error ? error.message : undefined} onRetry={refetch} />
+    );
+
+  const filtered = reviews?.filter((r) => r.isApproved === (activeTab === "approved")) ?? [];
+
+  return (
+    <div className="p-8">
+      <AdminPageHeader
+        title="Reviews"
+        subtitle={`${reviews?.filter((r) => !r.isApproved).length ?? 0} pending approval`}
+      />
+
+      <AdminFilterTabs tabs={TABS} active={activeTab} onChange={setActiveTab} />
+
+      {filtered.length === 0 && (
+        <div className="glass rounded-2xl p-12 text-center">
+          <p className="text-body-md text-text-muted">No reviews in this category</p>
+        </div>
+      )}
+
+      <div className="flex flex-col gap-4">
+        {filtered.map((review) => (
+          <div key={review.id} className="glass rounded-2xl p-6 flex flex-col gap-4">
+            <div className="flex items-start justify-between gap-4">
+              <div>
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-headline-sm text-text">{review.authorName}</span>
+                  {review.authorProfession && (
+                    <span className="text-body-sm text-text-muted">· {review.authorProfession}</span>
+                  )}
+                </div>
+                <div className="flex items-center gap-3 text-label-sm text-text-muted">
+                  <span>{review.destinationSlug}</span>
+                  <span>·</span>
+                  <span>{review.packageTitle}</span>
+                  <span>·</span>
+                  <span>{new Date(review.createdAt).toLocaleDateString("en-US", { day: "numeric", month: "short", year: "numeric" })}</span>
+                </div>
+              </div>
+              <div className="flex items-center gap-1.5 shrink-0">
+                {[1, 2, 3, 4, 5].map((s) => (
+                  <Star
+                    key={s}
+                    className={`w-4 h-4 ${s <= review.rating ? "fill-primary text-primary" : "text-text-subtle"}`}
+                  />
+                ))}
+              </div>
+            </div>
+
+            <p className="text-body-md text-text leading-relaxed">"{review.quote}"</p>
+
+            {review.imagePaths?.length > 0 && (
+              <div className="flex gap-2 flex-wrap">
+                {review.imagePaths.map((path, i) => (
+                  <img
+                    key={i}
+                    src={path}
+                    alt="Review"
+                    className="w-20 h-20 rounded-lg object-cover"
+                  />
+                ))}
+              </div>
+            )}
+
+            <div className="flex items-center gap-3 pt-2 border-t border-outline">
+              {!review.isApproved && (
+                <Button
+                  variant="primary"
+                  onClick={() => setConfirmApproveId(review.id)}
+                >
+                  <Check className="w-4 h-4" />
+                  Approve
+                </Button>
+              )}
+              <button
+                onClick={() => setConfirmDeleteId(review.id)}
+                className="flex items-center gap-1.5 text-body-sm text-text-muted hover:text-red-400 transition-colors"
+              >
+                <Trash2 className="w-4 h-4" />
+                Delete
+              </button>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <ConfirmDialog
+        isOpen={confirmApproveId !== null}
+        title="Approve this review?"
+        message="This review will be published publicly on the site."
+        confirmLabel="Yes, approve"
+        variant="warning"
+        isPending={approveReview.isPending}
+        onConfirm={() => {
+          if (confirmApproveId !== null) approveReview.mutate(confirmApproveId, { onSuccess: () => setConfirmApproveId(null) });
+        }}
+        onCancel={() => setConfirmApproveId(null)}
+      />
+
+      <ConfirmDialog
+        isOpen={confirmDeleteId !== null}
+        title="Delete this review?"
+        message="This review will be permanently removed and cannot be recovered."
+        confirmLabel="Yes, delete"
+        variant="danger"
+        isPending={deleteReview.isPending}
+        onConfirm={() => {
+          if (confirmDeleteId !== null) deleteReview.mutate(confirmDeleteId, { onSuccess: () => setConfirmDeleteId(null) });
+        }}
+        onCancel={() => setConfirmDeleteId(null)}
+      />
+    </div>
+  );
+}

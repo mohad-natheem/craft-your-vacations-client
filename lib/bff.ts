@@ -99,7 +99,8 @@ export async function bffFetch<T>(
       const body = (await backendResponse.json()) as { message?: string };
       if (body.message) message = body.message;
     } catch {
-      // non-JSON error body — use fallback message
+      // non-JSON or empty body — use HTTP status text if available
+      if (backendResponse.statusText) message = backendResponse.statusText;
     }
     return {
       ok: false,
@@ -110,7 +111,11 @@ export async function bffFetch<T>(
     };
   }
 
-  // 6. Parse and return
+  // 6. Parse and return (204 No Content or empty body → return undefined as T)
+  const contentLength = backendResponse.headers.get("content-length");
+  if (backendResponse.status === 204 || contentLength === "0") {
+    return { ok: true, data: undefined as T };
+  }
   const data = (await backendResponse.json()) as T;
   return { ok: true, data };
 }

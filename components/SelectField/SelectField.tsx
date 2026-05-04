@@ -1,5 +1,6 @@
 import React from "react";
 import type { FieldBaseProps, SelectOption } from "@/app/types/component";
+import { ArrowDown, ChevronDown } from "lucide-react";
 
 interface SelectFieldProps extends FieldBaseProps {
   options: SelectOption[];
@@ -60,7 +61,8 @@ export function SelectField({
           className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 material-symbols-outlined text-[20px] text-text-subtle"
           aria-hidden="true"
         >
-          expand_more
+          
+          <ChevronDown/>
         </span>
       </div>
       {hasError && <p className="text-body-sm text-red-400">{errorMessage}</p>}

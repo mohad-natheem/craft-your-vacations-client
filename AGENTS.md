@@ -32,7 +32,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Stack
 - **Next.js 16.2.2** — App Router. Middleware file is `proxy.ts` (not `middleware.ts`), exported function is `proxy` (not `middleware`). Read `node_modules/next/dist/docs/` before writing any Next.js-specific code.
 - **React 19**, **TypeScript**, **Tailwind CSS v4**
-- **NextAuth** (`next-auth` v4) for authentication — Google OAuth provider
+- **NextAuth** (`next-auth` v4) for authentication — Credentials + Google OAuth providers
 - **TanStack React Query v5** for server state
 - **Zustand v5** for client UI state
 - **Axios** for browser-side HTTP (`lib/api.ts`)
@@ -144,8 +144,15 @@ When adding a new data-fetching feature, follow this order:
 - Auth is handled by **NextAuth v4** (`next-auth`) — credentials + Google OAuth providers
 - NextAuth config: `lib/auth.ts` (handlers, providers, JWT callbacks)
 - Client-side session: `useSession()` from `next-auth/react`; trigger a session refresh with `update()`
-- Session shape includes `session.user.phoneVerified: boolean` — controls onboarding redirect
 - `proxy.ts` is a passthrough — no redirect logic lives there
+
+### Token flow
+The .NET backend owns authentication. On login (credentials or Google OAuth), it returns `accessToken`, `refreshToken`, and `accessTokenExpiry`. NextAuth stores these in its encrypted session cookie — it does **not** issue its own tokens.
+
+- The `userId` is **not** encoded inside the .NET access token; it is stored separately in the NextAuth JWT as `token.userId` and exposed as `session.user.userId`.
+- Session also carries `session.user.phoneVerified: boolean` — controls onboarding redirect.
+- Auto-refresh: the `jwt` callback in `lib/auth.ts` refreshes the access token via `POST /api/Auth/refresh` when it is within 2 minutes of expiry. On failure it sets `token.error = "RefreshAccessTokenError"`.
+- `bffFetch` reads the NextAuth JWT on the server, checks for `token.userId`, and attaches `Authorization: Bearer <backendAccessToken>` to every protected .NET request.
 
 ### Route guards
 Auth redirect logic lives in client-side layouts, **not** `proxy.ts`:

@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { bffFetch } from "@/lib/bff";
-import { Destination } from "@/app/types/api";
+import type { Destination } from "@/app/types/api";
 
 export async function GET(req: NextRequest): Promise<NextResponse> {
   const result = await bffFetch<Destination[]>("/api/Destinations", req, {

@@ -9,6 +9,14 @@ const nextConfig: NextConfig = {
       },
     ],
   },
+  // async headers() {
+  //   return [
+  //     {
+  //       source: "/(login|register|onboarding)",
+  //       headers: [{ key: "Cache-Control", value: "no-store" }],
+  //     },
+  //   ];
+  // },
 };
 
 export default nextConfig;

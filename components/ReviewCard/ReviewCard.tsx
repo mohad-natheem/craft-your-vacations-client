@@ -4,18 +4,9 @@ import { useState } from "react";
 import Image from "next/image";
 import { Star, MapPin } from "lucide-react";
 import type { Review } from "@/app/types/api";
+import { formatMonth } from "@/lib/constants";
 
 const QUOTE_CLAMP_THRESHOLD = 160;
-
-const MONTH_NAMES = [
-  "Jan", "Feb", "Mar", "Apr", "May", "Jun",
-  "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
-];
-
-function formatMonth(value: string): string {
-  const [year, month] = value.split("-");
-  return `${MONTH_NAMES[parseInt(month, 10) - 1]} ${year}`;
-}
 
 function getInitials(name: string): string {
   return name

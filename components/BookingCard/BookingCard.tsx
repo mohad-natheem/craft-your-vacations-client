@@ -1,25 +1,9 @@
 "use client";
 
 import { CalendarDays, Users, FileText, Clock, CheckCircle2 } from "lucide-react";
-import type { Booking, BookingStatus } from "@/app/types/api";
+import type { Booking } from "@/app/types/api";
 import Button from "@/components/Button/Button";
-
-const MONTH_NAMES = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
-];
-
-function formatPreferredMonth(value: string): string {
-  const [year, month] = value.split("-");
-  return `${MONTH_NAMES[parseInt(month, 10) - 1]} ${year}`;
-}
-
-const statusConfig: Record<BookingStatus, { label: string; className: string }> = {
-  pending: { label: "Pending Review", className: "bg-primary/15 text-primary" },
-  confirmed: { label: "Confirmed", className: "bg-green-500/15 text-green-400" },
-  completed: { label: "Completed", className: "bg-primary/15 text-primary" },
-  cancelled: { label: "Cancelled", className: "bg-red-500/15 text-red-400" },
-};
+import { formatMonth, bookingStatusClasses, bookingStatusLabels } from "@/lib/constants";
 
 interface BookingCardProps {
   booking: Booking;
@@ -27,7 +11,8 @@ interface BookingCardProps {
 }
 
 export default function BookingCard({ booking, onReviewClick }: BookingCardProps) {
-  const status = statusConfig[booking.status];
+  const statusClass = bookingStatusClasses[booking.status];
+  const statusLabel = bookingStatusLabels[booking.status];
 
   return (
     <div className="glass rounded-2xl p-6 flex flex-col gap-4">
@@ -35,9 +20,9 @@ export default function BookingCard({ booking, onReviewClick }: BookingCardProps
       <div className="flex items-start justify-between gap-4">
         <h2 className="text-headline-sm text-text">{booking.packageTitle}</h2>
         <span
-          className={`shrink-0 px-3 py-1 rounded-full text-label-sm font-medium ${status.className}`}
+          className={`shrink-0 px-3 py-1 rounded-full text-label-sm font-medium ${statusClass}`}
         >
-          {status.label}
+          {statusLabel}
         </span>
       </div>
 
@@ -59,7 +44,7 @@ export default function BookingCard({ booking, onReviewClick }: BookingCardProps
               Travel Month
             </p>
             <p className="text-body-sm text-text">
-              {formatPreferredMonth(booking.preferredMonth)}
+              {formatMonth(booking.preferredMonth)}
             </p>
           </div>
         </div>

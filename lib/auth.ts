@@ -70,6 +70,7 @@ export const authOptions: NextAuthOptions = {
           name: user.name ?? null,
           image: user.image ?? null,
           phoneVerified: user.phoneVerified ?? false,
+          role: user.role ?? "Customer",
           backendAccessToken: user.accessToken,
           backendRefreshToken: user.refreshToken,
           backendTokenExpiry: user.accessTokenExpiry,
@@ -109,8 +110,10 @@ export const authOptions: NextAuthOptions = {
             return "/login?error=ServiceUnavailable";
           }
           const backendUser = await res.json();
+
           user.id = String(backendUser.userId);
           user.phoneVerified = backendUser.phoneVerified ?? false;
+          user.role = backendUser.role ?? "Customer";
           user.backendAccessToken = backendUser.accessToken;
           user.backendRefreshToken = backendUser.refreshToken;
           user.backendTokenExpiry = backendUser.accessTokenExpiry;
@@ -125,12 +128,14 @@ export const authOptions: NextAuthOptions = {
     async jwt({ token, user, trigger, session }) {
       // Client-side session update (e.g. after OTP verification)
       if (trigger === "update" && session) {
-        return { ...token, ...session };
+        const { role: _role, ...safeSession } = session;
+        return { ...token, ...safeSession };
       }
       // Initial login — store backend tokens
       if (user) {
         token.userId = user.id;
         token.phoneVerified = user.phoneVerified ?? false;
+        token.role = user.role ?? "Customer";
         token.backendAccessToken = user.backendAccessToken!;
         token.backendRefreshToken = user.backendRefreshToken!;
         token.backendTokenExpiry = user.backendTokenExpiry!;
@@ -149,6 +154,7 @@ export const authOptions: NextAuthOptions = {
     async session({ session, token }) {
       session.user.userId = token.userId as string;
       session.user.phoneVerified = token.phoneVerified ?? false;
+      session.user.role = token.role;
       if (token.error) session.error = token.error;
       return session;
     },

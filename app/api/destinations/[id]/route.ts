@@ -1,6 +1,6 @@
 import { NextResponse, NextRequest } from "next/server";
 import { bffFetch } from "@/lib/bff";
-import { DestinationDetail } from "@/app/types/api";
+import type { DestinationDetail } from "@/app/types/api";
 
 export async function GET(
   req: NextRequest,

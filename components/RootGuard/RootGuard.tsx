@@ -23,6 +23,12 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
       return;
     }
 
+    if (session?.user?.role === "Admin") {
+      console.log("Redirecting from Root Guard");
+      router.replace("/admin");
+      return;
+    }
+
     if (isProtected && !session) {
       redirect("/login");
     }
@@ -34,6 +40,7 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
 
   if (status === "loading") return <LoadingSpinner />;
   if (session?.error === "RefreshAccessTokenError") return null;
+  if (session?.user?.role === "Admin") return null;
   if (isProtected && !session) return null;
   if (session && session.user.phoneVerified === false) return null;
 
