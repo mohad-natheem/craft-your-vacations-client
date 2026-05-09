@@ -39,9 +39,6 @@ export default function HomePage() {
     return () => window.removeEventListener("resize", update);
   }, [reviews.length]);
 
-  if (isLoading) {
-    return <Loader />;
-  }
   return (
     <div className="no-scrollbar overflow-y-auto">
       <section className="relative min-h-[60vh] md:min-h-[75vh] lg:h-230.25 px-6 md:pl-30 md:pr-0 pt-20 md:pt-0 flex items-center overflow-hidden bg-surface-low">

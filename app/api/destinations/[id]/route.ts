@@ -9,6 +9,7 @@ export async function GET(
   const { id } = await params;
   const result = await bffFetch<DestinationDetail>(`/api/Destinations/${id}`, req, {
     isPublic: true,
+    cache: "no-store",
   });
 
   if (!result.ok) return result.response;

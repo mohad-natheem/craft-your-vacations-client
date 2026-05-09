@@ -9,7 +9,7 @@ export async function GET(req: NextRequest) {
 
   const result = await bffFetch<Review[]>(path, req, {
     isPublic: true,
-    cache: { revalidate: 300 },
+    cache: "no-store",
   });
 
   if (!result.ok) return result.response;

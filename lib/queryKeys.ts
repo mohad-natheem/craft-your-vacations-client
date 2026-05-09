@@ -17,6 +17,7 @@ export const queryKeys = {
     approved: () => ['reviews', 'approved'] as const,
   },
   admin: {
+    allBookings: () => ['admin', 'bookings'] as const,
     bookings: (status?: string) => ['admin', 'bookings', status ?? 'all'] as const,
     booking: (id: number) => ['admin', 'bookings', id] as const,
     reviews: () => ['admin', 'reviews'] as const,

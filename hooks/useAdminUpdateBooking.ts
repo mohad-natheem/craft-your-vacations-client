@@ -12,7 +12,7 @@ export function useAdminUpdateBooking(id: number) {
     mutationFn: (body: AdminUpdateBookingRequest) =>
       adminApi.updateBooking(id, body),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["admin", "bookings"] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.admin.allBookings() });
     },
   });
 }

@@ -10,7 +10,7 @@ export async function GET(
 
   const result = await bffFetch<Review[]>(`/api/Reviews/destination/${slug}`, req, {
     isPublic: true,
-    cache: { revalidate: 300 },
+    cache: "no-store",
   });
 
   if (!result.ok) return result.response;

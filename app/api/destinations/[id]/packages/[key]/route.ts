@@ -10,7 +10,7 @@ export async function GET(
   const result = await bffFetch<PackageDetail>(
     `/api/Destinations/${id}/Packages/${key}`,
     req,
-    { isPublic: true }
+    { isPublic: true, cache: "no-store" }
   );
   if (!result.ok) return result.response;
   return NextResponse.json(result.data);
