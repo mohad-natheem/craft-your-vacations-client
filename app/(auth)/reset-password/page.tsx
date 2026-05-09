@@ -54,7 +54,7 @@ function IdentifierStep({
   const handleSend = () => {
     if (!username.trim()) return;
     startReset(
-      { username: username.trim() },
+      { identifier: username.trim() },
       { onSuccess: () => onSuccess(username.trim()) },
     );
   };
@@ -98,7 +98,7 @@ function ResetStep({ identifier }: { identifier: string }) {
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
   const inputRefs = useRef<(HTMLInputElement | null)[]>([]);
-  
+
   const passwordMismatch =
     confirmPassword.length > 0 && newPassword !== confirmPassword;
   const canSubmit =
@@ -140,7 +140,7 @@ function ResetStep({ identifier }: { identifier: string }) {
 
   const handleReset = () => {
     resetPassword(
-      { username: identifier, otp: otp.join(""), newPassword },
+      { identifier: identifier, otp: otp.join(""), newPassword },
       { onSuccess: () => router.replace("/login?reset=success") },
     );
   };

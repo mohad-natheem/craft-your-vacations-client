@@ -38,7 +38,11 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
     }
   }, [session, status, pathname, router, isProtected]);
 
-  if (status === "loading") return <LoadingSpinner />;
+  // Only block on loading for protected routes. Public routes (e.g. "/") render
+  // immediately — SessionProvider's initial fetch resolves quickly and the Navbar
+  // will update once it does. Blocking all routes causes a permanent spinner when
+  // the page is restored from bfcache with status frozen at "loading".
+  if (status === "loading" && isProtected) return <LoadingSpinner />;
   if (session?.error === "RefreshAccessTokenError") return null;
   if (session?.user?.role === "Admin") return null;
   if (isProtected && !session) return null;
