@@ -1,7 +1,7 @@
 import { getToken } from "next-auth/jwt";
 import { NextRequest, NextResponse } from "next/server";
 
-const BACKEND_URL = "http://localhost:5025";
+const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:5025";
 
 interface BffFetchOptions {
   /** If true, skips the auth check. Use for public endpoints. */
