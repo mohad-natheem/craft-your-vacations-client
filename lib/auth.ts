@@ -3,7 +3,7 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import type { NextAuthOptions } from "next-auth";
 import type { JWT } from "next-auth/jwt";
 
-const BACKEND_URL = process.env.BACKEND_URL;
+const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:5025";
 
 async function refreshBackendToken(token: JWT): Promise<JWT> {
   try {

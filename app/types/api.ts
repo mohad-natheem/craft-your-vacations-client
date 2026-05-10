@@ -165,7 +165,7 @@ export interface CreateReviewRequest {
 // --- Admin types ---
 
 export interface AdminBookingCustomer {
-  id: string;
+  id: number;
   name: string;
   email: string;
   mobileNumber: string;
@@ -183,7 +183,7 @@ export interface AdminReview extends Review {
 }
 
 export interface Customer {
-  id: string;
+  id: number;
   name: string;
   email: string;
   mobileNumber: string;

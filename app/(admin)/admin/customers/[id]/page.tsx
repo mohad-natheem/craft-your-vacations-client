@@ -18,7 +18,7 @@ export default function AdminCustomerDetailPage({
   const { id } = use(params);
   const { data: customer, isLoading, isError, error, refetch } = useAdminCustomer(id);
   const { data: allBookings, isLoading: bookingsLoading } = useAdminBookings();
-  const customerBookings = allBookings?.filter((b) => b.customer.id === id) ?? [];
+  const customerBookings = allBookings?.filter((b) => b.customer.id === Number(id)) ?? [];
 
   if (isLoading || bookingsLoading)
     return <LoadingSpinner message="Loading customer…" fullScreen={false} />;
