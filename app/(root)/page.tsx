@@ -20,7 +20,7 @@ import { useDestinations } from "@/hooks/useDestinations";
 import { useApprovedReviews } from "@/hooks/useApprovedReviews";
 
 export default function HomePage() {
-  const { data, isLoading } = useDestinations();
+  const { data } = useDestinations();
   const { data: reviews = [] } = useApprovedReviews();
 
   const [sliderVisibleCount, setSliderVisibleCount] = useState(1);
@@ -59,11 +59,7 @@ export default function HomePage() {
               archipelagos.
             </p>
             <div className="flex flex-wrap gap-4">
-              <Button>Begin Your Story</Button>
-              <Button variant="secondary">
-                View Collections
-                <LucideArrowRightCircle />
-              </Button>
+              <Button href="/destinations">Begin Your Story</Button>
             </div>
           </div>
           <div className="absolute right-[-5%] top-[10%] w-1/2 h-[80%] z-0 hidden lg:block">

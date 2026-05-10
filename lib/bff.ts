@@ -73,7 +73,11 @@ export async function bffFetch<T>(
     method,
     headers: fetchHeaders,
     ...cacheConfig,
-    ...(rawBody !== undefined ? { body: rawBody } : body !== undefined ? { body: JSON.stringify(body) } : {}),
+    ...(rawBody !== undefined
+      ? { body: rawBody }
+      : body !== undefined
+        ? { body: JSON.stringify(body) }
+        : {}),
   };
 
   // 4. Call .NET backend
