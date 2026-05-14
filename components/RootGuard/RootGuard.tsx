@@ -3,6 +3,8 @@ import { signOut, useSession } from "next-auth/react";
 import { redirect, usePathname, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import LoadingSpinner from "../LoadingSpinner/LoadingSpinner";
+import { useInactivityLogout } from "@/hooks/useInactivityLogout";
+import InactivityDialog from "@/components/InactivityDialog/InactivityDialog";
 
 const PROTECTED_PATHS = ["/profile", "/bookings"];
 
@@ -10,6 +12,10 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
   const { data: session, status } = useSession();
   const router = useRouter();
   const pathname = usePathname();
+
+  const { showWarning, countdown, keepSignedIn } = useInactivityLogout(
+    !!session && status === "authenticated",
+  );
 
   const isProtected = PROTECTED_PATHS.some(
     (p) => pathname === p || pathname.startsWith(p + "/"),
@@ -48,5 +54,14 @@ export function RootGuard({ children }: { children: React.ReactNode }) {
   if (isProtected && !session) return null;
   if (session && session.user.phoneVerified === false) return null;
 
-  return <>{children}</>;
+  return (
+    <>
+      <InactivityDialog
+        isOpen={showWarning}
+        countdown={countdown}
+        onKeepSignedIn={keepSignedIn}
+      />
+      {children}
+    </>
+  );
 }

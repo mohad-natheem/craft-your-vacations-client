@@ -8,7 +8,7 @@ const queryClient = new QueryClient();
 
 export function Providers({ children }: { children: React.ReactNode }) {
   return (
-    <SessionProvider refetchInterval={60} refetchOnWindowFocus={true}>
+    <SessionProvider refetchOnWindowFocus={true}>
       <ThemeProvider
         attribute="data-theme"
         defaultTheme="dark"

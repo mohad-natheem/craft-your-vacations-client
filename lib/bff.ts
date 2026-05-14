@@ -1,4 +1,6 @@
 import { getToken } from "next-auth/jwt";
+import { getServerSession } from "next-auth";
+import { authOptions } from "@/lib/auth";
 import { NextRequest, NextResponse } from "next/server";
 
 const BACKEND_URL = process.env.BACKEND_URL ?? "http://localhost:5025";
@@ -40,17 +42,21 @@ export async function bffFetch<T>(
     rawBody,
   } = options;
 
-  // 1. Auth check
-  const token = isPublic
-    ? null
-    : await getToken({ req, secret: process.env.NEXTAUTH_SECRET! });
+  // 1. Auth check — getServerSession triggers the jwt callback, which runs
+  // the token refresh logic before we ever reach the .NET backend.
+  const session = isPublic ? null : await getServerSession(authOptions);
 
-  if (!isPublic && !token?.userId) {
+  if (!isPublic && !session?.user?.userId) {
     return {
       ok: false,
       response: NextResponse.json({ message: "Unauthorized" }, { status: 401 }),
     };
   }
+
+  // Read the (now refreshed) token from the cookie for the Authorization header.
+  const token = isPublic
+    ? null
+    : await getToken({ req, secret: process.env.NEXTAUTH_SECRET! });
 
   // 2. Build headers
   // rawBody (e.g. FormData) must not have Content-Type set manually — the

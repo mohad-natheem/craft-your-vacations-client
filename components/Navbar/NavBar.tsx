@@ -30,7 +30,8 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
   const pathname = usePathname();
   const { mobileMenuOpen, toggleMobileMenu, closeMobileMenu } = useUIStore();
 
-  const { data: session } = useSession();
+  const { data: session, status } = useSession();
+  const isSessionLoading = status === "loading";
   const isUserLogged = !!session;
 
   useEffect(() => {
@@ -82,7 +83,9 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
         {/* Action buttons */}
         <div className="hidden md:flex items-center gap-2">
           <ToggleTheme />
-          {isUserLogged ? (
+          {isSessionLoading ? (
+            <div className="w-12 h-12 rounded-full bg-surface-high animate-pulse" />
+          ) : isUserLogged ? (
             <Button variant="icon" href="/profile" aria-label="Profile">
               <CircleUser className="w-5 h-5" />
             </Button>
@@ -124,7 +127,7 @@ export function Navbar({ links = defaultLinks, className = "" }: NavbarProps) {
               {link.label}
             </Link>
           ))}
-          {isUserLogged ? (
+          {isSessionLoading ? null : isUserLogged ? (
             <Link
               href="/profile"
               className="px-4 py-3 rounded-lg text-body-md transition-colors text-text-muted hover:text-text hover:bg-surface-high"

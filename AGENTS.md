@@ -8,6 +8,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 ## Navigation
 - Always use `<Link>` from `next/link` for internal navigation. Never use bare `<a>` tags for routing.
+- Always use `useRouter` from `next/navigation`. Never import it from `next/router`.
 
 ## Images
 - Always use `<Image>` from `next/image` instead of `<img>` tags.
@@ -20,6 +21,12 @@ This version has breaking changes — APIs, conventions, and file structure may 
 ## Components
 - Before creating a new component, check the `components/` folder for an existing one that can be reused or extended.
 - When building new components, make them reusable and place them in the `components/` folder.
+
+## Dialogs and Modals
+- Always use `components/Dialog/Dialog.tsx` as the base for any dialog or modal. Never write the overlay, backdrop, or panel wrapper manually.
+- Pass `onClose` when the dialog should be dismissible via backdrop click or Escape key. Omit it when the dialog must not be dismissible (e.g. inactivity warning).
+- Use `size="lg"` for form-heavy modals; default `size="sm"` for confirmation and simple info dialogs.
+- Use the `className` prop to add panel-level layout classes (e.g. `"items-center gap-5 text-center"`).
 
 ## Page vs Component responsibilities
 - **Modals belong to the page, not to child components.** Never render a modal (or control its open/close state) inside a card, list item, or other reusable component. The page owns the modal's `isOpen` state, the handler that opens it, and the rendered `<Modal />` element.

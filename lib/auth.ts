@@ -142,10 +142,11 @@ export const authOptions: NextAuthOptions = {
         return token;
       }
 
-      // Token still valid (with 2min buffer) — return as-is
-      if (Date.now() < (token.backendTokenExpiry - 120) * 1000) {
-        return token;
-      }
+      const now = Date.now();
+      const expiry = (token.backendTokenExpiry - 3600) * 1000;
+     
+
+      if (now < expiry) return token;
 
       // Token expiring/expired — attempt refresh
       return refreshBackendToken(token);

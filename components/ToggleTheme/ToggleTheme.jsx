@@ -14,7 +14,7 @@ function ToggleTheme() {
 
   if (!mounted) {
     return (
-      <Button disabled={true}>
+      <Button variant="icon" disabled={true} aria-hidden="true">
         <Sun className="h-5 w-5" />
       </Button>
     );
