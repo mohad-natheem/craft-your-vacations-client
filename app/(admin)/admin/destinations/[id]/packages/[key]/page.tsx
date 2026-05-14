@@ -221,37 +221,43 @@ export default function EditPackagePage({
               <div className="flex flex-col gap-3">
                 <label className="text-label-md text-text-muted">Activities</label>
                 {day.activities.map((act, actIndex) => (
-                  <div key={actIndex} className="flex gap-2 items-start">
-                    <input
-                      value={act.time}
-                      onChange={(e) => updateActivity(dayIndex, actIndex, "time", e.target.value)}
-                      placeholder="Time"
-                      className="w-24 shrink-0 bg-surface-highest border border-outline rounded-xl px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                    <input
-                      value={act.description}
-                      onChange={(e) => updateActivity(dayIndex, actIndex, "description", e.target.value)}
-                      placeholder="Description"
-                      className="flex-1 bg-surface-highest border border-outline rounded-xl px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
-                    />
-                    <select
-                      value={act.type}
-                      onChange={(e) => updateActivity(dayIndex, actIndex, "type", e.target.value)}
-                      className="w-32 shrink-0 bg-surface-highest border border-outline rounded-xl px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
-                    >
-                      {ACTIVITY_TYPES.map((t) => (
-                        <option key={t} value={t}>{t}</option>
-                      ))}
-                    </select>
-                    {day.activities.length > 1 && (
-                      <button
-                        type="button"
-                        onClick={() => removeActivity(dayIndex, actIndex)}
-                        className="p-2 text-text-muted hover:text-red-400 transition-colors shrink-0"
+                  <div key={actIndex} className="flex flex-col sm:flex-row gap-2 items-stretch sm:items-start">
+                    {/* Time + description row (full width on mobile) */}
+                    <div className="flex gap-2 flex-1">
+                      <input
+                        value={act.time}
+                        onChange={(e) => updateActivity(dayIndex, actIndex, "time", e.target.value)}
+                        placeholder="Time"
+                        className="w-24 shrink-0 bg-surface-highest border border-outline rounded-xl px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                      <input
+                        value={act.description}
+                        onChange={(e) => updateActivity(dayIndex, actIndex, "description", e.target.value)}
+                        placeholder="Description"
+                        className="flex-1 bg-surface-highest border border-outline rounded-xl px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
+                      />
+                    </div>
+                    {/* Type + delete row (full width on mobile) */}
+                    <div className="flex gap-2">
+                      <select
+                        value={act.type}
+                        onChange={(e) => updateActivity(dayIndex, actIndex, "type", e.target.value)}
+                        className="flex-1 sm:w-32 sm:flex-none bg-surface-highest border border-outline rounded-xl px-3 py-2 text-body-sm text-text focus:outline-none focus:ring-1 focus:ring-primary"
                       >
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    )}
+                        {ACTIVITY_TYPES.map((t) => (
+                          <option key={t} value={t}>{t}</option>
+                        ))}
+                      </select>
+                      {day.activities.length > 1 && (
+                        <button
+                          type="button"
+                          onClick={() => removeActivity(dayIndex, actIndex)}
+                          className="p-2 text-text-muted hover:text-red-400 transition-colors shrink-0"
+                        >
+                          <Trash2 className="w-4 h-4" />
+                        </button>
+                      )}
+                    </div>
                   </div>
                 ))}
                 <Button

@@ -18,6 +18,14 @@ This version has breaking changes — APIs, conventions, and file structure may 
 - Never use arbitrary CSS in `className` (e.g. `[box-shadow:...]`, `[color:...]`). Always use Tailwind's built-in utilities or token-based variants (e.g. `shadow-lg shadow-primary/20`, `text-primary/50`).
 - Before introducing any new color, typography, or other design tokens, check `global.css` first. Use the existing Tailwind utilities and CSS variables defined there rather than adding new ones.
 
+## Mobile-first & Responsive Design
+- **Always design for mobile first.** Write base styles for mobile, then layer on `md:` overrides for desktop.
+- Use only the `md:` breakpoint (768px) for the mobile/desktop split — do not introduce `sm:`, `lg:`, or `xl:` breakpoints unless there is a clear need for an intermediate layout.
+- For layouts that place elements side-by-side (headers with action buttons, form rows, stat grids), default to stacked (`flex-col`) on mobile and switch to horizontal (`md:flex-row`) on desktop.
+- Fixed sidebars must use `md:translate-x-0` to stay visible on desktop and slide-in overlay behaviour on mobile — never use a fixed `ml-*` offset without a matching `md:ml-*`.
+- Any fixed top bar on mobile (e.g. admin top bar, `h-14`) must be compensated with matching `pt-14 md:pt-0` on the main content area.
+- When adding a new page or component, test the layout mentally at ~375px width before finalising class names.
+
 ## Components
 - Before creating a new component, check the `components/` folder for an existing one that can be reused or extended.
 - When building new components, make them reusable and place them in the `components/` folder.
@@ -63,13 +71,14 @@ Next.js API Route (app/api/...)
 - Used inside React components and hooks
 - Always call via `api.get<T>()`, `api.post<T>()`, `api.put<T>()`, `api.patch<T>()`, `api.delete<T>()`
 - Returns the response body directly as `T`
-- Automatically redirects to `/login` on 401
+- On error, rejects with a readable `Error` extracted from the response body — handle errors at the call site
 
 ### Layer 2 — Next.js → .NET: `lib/bff.ts`
 - Used only inside Next.js route handlers (`app/api/**/route.ts`)
 - Always call `bffFetch<T>(path, options)` — never call the .NET backend directly from components
 - `isPublic: true` — skips auth check (use for publicly accessible endpoints)
-- `isPublic: false` (default) — requires a valid NextAuth session; returns 401 if missing; attaches `Authorization: Bearer <token>` header automatically
+- `isPublic: false` (default) — calls `getServerSession(authOptions)` first, which triggers the `jwt` callback and transparently refreshes the backend access token if it is near expiry. Returns 401 if no valid session. Attaches `Authorization: Bearer <token>` header automatically.
+- **Never replace `getServerSession` with `getToken` in `bffFetch`** — `getToken` bypasses the jwt callback and the token will never be refreshed inline.
 - `cache` — defaults to `{ revalidate: 300 }` (Next.js ISR, 5 min). Override per route:
   - `{ revalidate: N }` — cache for N seconds (Next.js server cache)
   - `"no-store"` — never cache, always hit .NET fresh (use for user-specific data)
@@ -159,7 +168,13 @@ The .NET backend owns authentication. On login (credentials or Google OAuth), it
 - The `userId` is **not** encoded inside the .NET access token; it is stored separately in the NextAuth JWT as `token.userId` and exposed as `session.user.userId`.
 - Session also carries `session.user.phoneVerified: boolean` — controls onboarding redirect.
 - Auto-refresh: the `jwt` callback in `lib/auth.ts` refreshes the access token via `POST /api/Auth/refresh` when it is within 2 minutes of expiry. On failure it sets `token.error = "RefreshAccessTokenError"`.
-- `bffFetch` reads the NextAuth JWT on the server, checks for `token.userId`, and attaches `Authorization: Bearer <backendAccessToken>` to every protected .NET request.
+- `bffFetch` calls `getServerSession(authOptions)` (not `getToken`) so the `jwt` callback fires on every protected API call, refreshing the token inline before the request reaches .NET. The refreshed token is then read via `getToken` solely to extract `backendAccessToken` for the `Authorization` header.
+
+### Inactivity logout
+Handled by `hooks/useInactivityLogout.ts`, consumed in `RootGuard`:
+- After **15 minutes** of no user activity, `InactivityDialog` is shown with a **30-second countdown**.
+- Activity events (`mousemove`, `mousedown`, `keydown`, `touchstart`, `scroll`, `click`) reset the 15-min timer. Once the warning dialog appears these events are intentionally blocked from resetting the timer — only "Keep Signed In" can dismiss it.
+- On countdown expiry or "Sign Out" click: `signOut({ redirect: false })` then `window.location.replace("/login")` — using `replace` so the browser Back button cannot return the user to the protected page they were on.
 
 ### Route guards
 Auth redirect logic lives in client-side layouts, **not** `proxy.ts`:
