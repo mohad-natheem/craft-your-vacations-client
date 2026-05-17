@@ -143,8 +143,7 @@ export const authOptions: NextAuthOptions = {
       }
 
       const now = Date.now();
-      const expiry = (token.backendTokenExpiry - 3600) * 1000;
-     
+      const expiry = (token.backendTokenExpiry - 60) * 1000;
 
       if (now < expiry) return token;
 

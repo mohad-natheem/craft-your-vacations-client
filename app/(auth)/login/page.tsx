@@ -4,7 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { signIn, getSession } from "next-auth/react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useSearchParams } from "next/navigation";
 import Logo from "@/public/logo.png";
 import LogoText from "@/public/logo_text.png";
 import Button from "@/components/Button/Button";
@@ -35,7 +35,6 @@ const GoogleIcon = () => (
 );
 
 export default function LoginPage() {
-  const router = useRouter();
   const searchParams = useSearchParams();
   const [activeTab, setActiveTab] = useState<Tab>("email");
   const [email, setEmail] = useState("");
@@ -67,13 +66,13 @@ export default function LoginPage() {
     }
 
     const freshSession = await getSession();
-    router.replace(freshSession?.user?.role === "Admin" ? "/admin" : "/");
+    window.location.replace(freshSession?.user?.role === "Admin" ? "/admin" : "/");
   };
 
   const handleGoogleSignIn = async () => {
     const result = await signIn("google", {
       redirect: false,
-      callbackUrl: "/",
+      callbackUrl: "/login",
     });
     if (result?.url) window.location.replace(result.url);
   };
